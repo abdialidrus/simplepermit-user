@@ -51,3 +51,5 @@ if [ -n "$hasNewFilesFormatted" ]; then
 fi
 
 pop_stash_files
+
+printf "\e[32;1m%s\e[0m\n" 'Finished running Pre-Commit'
