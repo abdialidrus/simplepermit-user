@@ -16,6 +16,12 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.19.0
+  local_storage_permit_api:
+    path: packages/local_storage_permit_api
+  permit_api:
+    path: packages/permit_api
+  permit_repository:
+    path: packages/permit_repository
 
 dev_dependencies:
   bloc_test: ^9.1.7

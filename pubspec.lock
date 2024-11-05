@@ -244,6 +244,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  local_storage_permit_api:
+    dependency: "direct main"
+    description:
+      path: "packages/local_storage_permit_api"
+      relative: true
+    source: path
+    version: "0.1.0+1"
   logging:
     dependency: transitive
     description:
@@ -332,6 +339,20 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
+  permit_api:
+    dependency: "direct main"
+    description:
+      path: "packages/permit_api"
+      relative: true
+    source: path
+    version: "0.1.0+1"
+  permit_repository:
+    dependency: "direct main"
+    description:
+      path: "packages/permit_repository"
+      relative: true
+    source: path
+    version: "0.1.0+1"
   pool:
     dependency: transitive
     description:
