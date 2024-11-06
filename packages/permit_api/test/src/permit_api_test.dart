@@ -11,8 +11,8 @@ class TestPermitApi extends PermitApi {
 
 void main() {
   group('PermitApi', () {
-    test('can be instantiated', () {
-      expect(TestPermitApi.new, isNotNull);
+    test('can be constructed', () {
+      expect(TestPermitApi.new, returnsNormally);
     });
   });
 }
