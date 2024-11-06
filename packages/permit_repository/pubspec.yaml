@@ -1,10 +1,14 @@
 name: permit_repository
 description: A repository that handles permit related requests.
-version: 0.1.0+1
+version: 1.0.0+1
 publish_to: none
 
 environment:
   sdk: ^3.5.0
+
+dependencies:
+  permit_api:
+    path: ../permit_api
 
 dev_dependencies:
   mocktail: ^1.0.4
