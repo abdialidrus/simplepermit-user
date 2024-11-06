@@ -16,6 +16,15 @@ abstract class PermitApi {
   /// it will be replaced.
   Future<void> savePermit(Permit permit);
 
+  /// Deletes the `permit` with the given id.
+  ///
+  /// If no `permit` with the given id exists, a [PermitNotFoundException]
+  /// error isthrown.
+  Future<void> deletePermit(String id);
+
   /// Closes the client and frees up any resources.
   Future<void> close();
 }
+
+/// Exception thrown when a permit is not found.
+class PermitNotFoundException implements Exception {}

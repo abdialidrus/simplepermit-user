@@ -1,6 +1,6 @@
 name: local_storage_permit_api
 description: A Flutter implementation of the PermitApi that uses local storage.
-version: 0.1.0+1
+version: 1.0.0+1
 publish_to: none
 
 environment:
@@ -10,6 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  meta: ^1.15.0
+  permit_api:
+    path: ../permit_api
+  rxdart: ^0.28.0
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:
