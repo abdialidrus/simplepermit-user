@@ -1,0 +1,69 @@
+import 'package:flutter/material.dart';
+
+class MainButton extends StatelessWidget {
+  const MainButton({
+    required this.onTap,
+    required this.label,
+    required this.cornerRadius,
+    required this.paddingTop,
+    required this.paddingBottom,
+    required this.paddingLeft,
+    required this.paddingRight,
+    required this.labelStyle,
+    required this.backgroundColor,
+    required this.leadingIcon,
+    required this.trailingIcon,
+    super.key,
+  });
+
+  final VoidCallback? onTap;
+  final String label;
+  final TextStyle labelStyle;
+  final double cornerRadius;
+  final double paddingTop;
+  final double paddingBottom;
+  final double paddingLeft;
+  final double paddingRight;
+  final Color backgroundColor;
+  final Widget? leadingIcon;
+  final Widget? trailingIcon;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.all(Radius.circular(cornerRadius)),
+        ),
+        padding: EdgeInsets.only(
+          top: paddingTop,
+          bottom: paddingBottom,
+          left: paddingLeft,
+          right: paddingRight,
+        ),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (leadingIcon != null) ...[
+                leadingIcon!,
+                const SizedBox(width: 8),
+              ],
+              Text(
+                label,
+                style: labelStyle,
+              ),
+              if (trailingIcon != null) ...[
+                const SizedBox(width: 8),
+                trailingIcon!,
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
