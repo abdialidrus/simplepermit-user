@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permit_repository/permit_repository.dart';
+import 'package:simple_permit_user/home/home.dart';
 import 'package:simple_permit_user/l10n/l10n.dart';
-import 'package:simple_permit_user/landing/landing.dart';
 import 'package:simple_permit_user/theme/theme.dart';
 
 class App extends StatelessWidget {
@@ -16,7 +16,7 @@ class App extends StatelessWidget {
       darkTheme: PermitAppTheme.dark,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const LandingPage(),
+      home: const HomePage(),
     );
   }
 }
