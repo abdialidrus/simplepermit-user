@@ -14,6 +14,7 @@ class MainButton extends StatelessWidget {
     required this.leadingIcon,
     required this.trailingIcon,
     super.key,
+    this.enabled = true,
   });
 
   final VoidCallback? onTap;
@@ -27,15 +28,16 @@ class MainButton extends StatelessWidget {
   final Color backgroundColor;
   final Widget? leadingIcon;
   final Widget? trailingIcon;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: enabled! ? onTap : null,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: enabled! ? backgroundColor : Colors.grey.shade500,
           borderRadius: BorderRadius.all(Radius.circular(cornerRadius)),
         ),
         padding: EdgeInsets.only(

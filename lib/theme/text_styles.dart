@@ -68,6 +68,11 @@ TextStyle ktsLargeRegular = GoogleFonts.inter(
   fontWeight: FontWeight.w400,
   height: _ktsLargeFontHeight,
 );
+TextStyle ktsLargeMedium = GoogleFonts.inter(
+  fontSize: _ktsLargeFontSize,
+  fontWeight: FontWeight.w500,
+  height: _ktsLargeFontHeight,
+);
 TextStyle ktsLargeSemiBold = GoogleFonts.inter(
   fontSize: _ktsLargeFontSize,
   fontWeight: FontWeight.w600,

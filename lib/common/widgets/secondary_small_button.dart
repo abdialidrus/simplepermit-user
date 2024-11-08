@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:simple_permit_user/common/widgets/main_button.dart';
 import 'package:simple_permit_user/theme/text_styles.dart';
 
-class MainSmallButton extends StatelessWidget {
-  const MainSmallButton({
+class SecondarySmallButton extends StatelessWidget {
+  const SecondarySmallButton({
     required this.label,
     required this.onTap,
     super.key,
@@ -31,7 +31,7 @@ class MainSmallButton extends StatelessWidget {
       labelStyle: ktsSmallMedium.copyWith(
         color: Theme.of(context).colorScheme.onPrimary,
       ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       trailingIcon: trailingIcon,
       leadingIcon: leadingIcon,
       enabled: enabled,
