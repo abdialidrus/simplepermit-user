@@ -30,7 +30,7 @@ import 'package:stacked_permit_user_app/services/application_service.dart';
   ],
   dialogs: [
     StackedDialog(classType: InfoAlertDialog),
-// @stacked-dialog
+    // @stacked-dialog
   ],
   logger: StackedLogger(),
 )

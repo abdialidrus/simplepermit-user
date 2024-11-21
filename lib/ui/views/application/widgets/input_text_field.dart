@@ -10,6 +10,7 @@ class InputTextField extends StatelessWidget {
     this.hint,
     this.maxLines = 1,
     this.showSuffixArrow = false,
+    this.enabled = true,
   });
 
   final String? label;
@@ -18,6 +19,7 @@ class InputTextField extends StatelessWidget {
   final int? maxLines;
   final bool showSuffixArrow;
   final TextEditingController controller;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,7 @@ class InputTextField extends StatelessWidget {
           maxLines: maxLines,
           minLines: maxLines,
           validator: validator,
+          enabled: enabled,
           decoration: InputDecoration(
             hintText: hint ?? label,
             hintStyle: ktsSmallRegular.copyWith(color: const Color(0x80000000)),
@@ -46,12 +49,20 @@ class InputTextField extends StatelessWidget {
               borderSide: BorderSide(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(6),
             ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(6),
+            ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Theme.of(context).primaryColor),
               borderRadius: BorderRadius.circular(6),
             ),
             errorBorder: OutlineInputBorder(
               borderSide: const BorderSide(color: Colors.red),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Theme.of(context).primaryColor),
               borderRadius: BorderRadius.circular(6),
             ),
             suffixIcon:

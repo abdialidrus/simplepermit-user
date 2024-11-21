@@ -24,7 +24,6 @@ class ApplicationViewModel extends BaseViewModel {
   final log = getLogger('ApplicationViewModel');
   final _applicationService = locator<ApplicationService>();
   final _navigationService = locator<NavigationService>();
-  final _dialogService = locator<DialogService>();
 
   final applicantFormKey = GlobalKey<FormState>();
   final applicantNameController = TextEditingController();
@@ -38,6 +37,7 @@ class ApplicationViewModel extends BaseViewModel {
   final applicantNotesController = TextEditingController();
 
   //
+  final contractorFormKey = GlobalKey<FormState>();
   final contractorCompanyOrIndividualNameController = TextEditingController();
   final contractorApplicableTradesController = TextEditingController();
   final contractorEmailController = TextEditingController();
@@ -47,6 +47,8 @@ class ApplicationViewModel extends BaseViewModel {
   final contractorCityController = TextEditingController();
   final contractorStreetController = TextEditingController();
   final contractorZipCodeController = TextEditingController();
+  List<ContractorModel> contractors = [];
+  bool canShowContractorForm = false;
 
   //
   final locationFormKey = GlobalKey<FormState>();
@@ -77,6 +79,69 @@ class ApplicationViewModel extends BaseViewModel {
 
   void onViewModelReady() {}
 
+  void showContractorForm() {
+    canShowContractorForm = true;
+    rebuildUi();
+  }
+
+  void hideContractorForm() {
+    canShowContractorForm = false;
+    resetContractorForm();
+    rebuildUi();
+  }
+
+  void addContractor() async {
+    if (!isContractorFormValid()) return;
+
+    if (contractorLicenseDocuments.isEmpty) {
+      SmartDialog.showNotify(
+        msg: 'Please upload at least one construction documents',
+        notifyType: NotifyType.alert,
+      );
+      return;
+    }
+
+    final uploadResult = await uploadContractorLicenseDocuments();
+
+    if (uploadResult == false) {
+      SmartDialog.showNotify(
+        msg: 'Failed to upload documents. Please try again',
+        notifyType: NotifyType.error,
+      );
+      return;
+    }
+
+    final contractorModel = ContractorModel(
+      individualName: contractorCompanyOrIndividualNameController.text,
+      trade: contractorApplicableTradesController.text,
+      email: contractorEmailController.text,
+      phoneNumber: contractorPhoneNumberController.text,
+      state: contractorCountryController.text,
+      city: contractorStateController.text,
+      country: contractorCityController.text,
+      zip: contractorStreetController.text,
+      street: contractorZipCodeController.text,
+      licenseDocumentIds: contractorLicenseDocumentIds,
+    );
+
+    contractors.add(contractorModel);
+    hideContractorForm();
+  }
+
+  void resetContractorForm() {
+    contractorCompanyOrIndividualNameController.text = '';
+    contractorApplicableTradesController.text = '';
+    contractorEmailController.text = '';
+    contractorPhoneNumberController.text = '';
+    contractorCountryController.text = '';
+    contractorStateController.text = '';
+    contractorCityController.text = '';
+    contractorStreetController.text = '';
+    contractorZipCodeController.text = '';
+    contractorLicenseDocumentIds.clear();
+    contractorLicenseDocuments.clear();
+  }
+
   bool canPopBack() {
     bool isOnFirstStep = activeStep == 1;
     bool isConfirming = isShowAcknowledgement;
@@ -93,28 +158,21 @@ class ApplicationViewModel extends BaseViewModel {
     }
 
     if (!isOnFirstStep) {
+      if (activeStep == 2 && canShowContractorForm) {
+        canShowContractorForm = false;
+        resetContractorForm();
+        rebuildUi();
+        return false;
+      }
+
       previousStep();
     }
 
     return isOnFirstStep;
   }
 
-  void navigateBack() async {
-    if (activeStep == 1) {
-      final dialogResponse = await _dialogService.showConfirmationDialog(
-        title: 'Confirm',
-        description:
-            'Are you sure you want to go back? You will lose all your progress.',
-        confirmationTitle: 'Yes, go back',
-        cancelTitle: 'No, cancel',
-      );
-
-      if (dialogResponse!.confirmed) {
-        _navigationService.back();
-      }
-    } else {
-      _navigationService.back();
-    }
+  void navigateBack() {
+    _navigationService.back();
   }
 
   void onCommunitySelectionChanged(int? value) {
@@ -129,9 +187,16 @@ class ApplicationViewModel extends BaseViewModel {
       }
     }
 
-    // if (activeStep == 2) {
-    //   await uploadContractorLicenseDocuments();
-    // }
+    if (activeStep == 2) {
+      if (contractors.isEmpty) {
+        SmartDialog.showNotify(
+          msg: 'Please add at least one contractor',
+          notifyType: NotifyType.alert,
+        );
+        return;
+      }
+      // await uploadContractorLicenseDocuments();
+    }
 
     if (activeStep == 3) {
       if (!isLocationFormValid()) {
@@ -200,10 +265,6 @@ class ApplicationViewModel extends BaseViewModel {
   Future<bool> uploadContractorLicenseDocuments() async {
     if (contractorLicenseDocuments.isEmpty) {
       return false;
-    }
-
-    if (contractorLicenseDocumentIds.isNotEmpty) {
-      return true;
     }
 
     try {
@@ -281,18 +342,6 @@ class ApplicationViewModel extends BaseViewModel {
         phoneNumber: applicantPhoneNumberController.text,
         notes: applicantNotesController.text,
       );
-      final contractor = ContractorModel(
-        individualName: contractorCompanyOrIndividualNameController.text,
-        trade: contractorApplicableTradesController.text,
-        email: contractorEmailController.text,
-        phoneNumber: contractorPhoneNumberController.text,
-        state: contractorCountryController.text,
-        city: contractorStateController.text,
-        country: contractorCityController.text,
-        zip: contractorStreetController.text,
-        street: contractorZipCodeController.text,
-        licenseDocumentIds: contractorLicenseDocumentIds,
-      );
       final location = LocationModel(
         state: locationCountryController.text,
         city: locationStateController.text,
@@ -306,7 +355,7 @@ class ApplicationViewModel extends BaseViewModel {
 
       final application = ApplicationModel(
         applicant: applicant,
-        contractors: [contractor],
+        contractors: contractors,
         location: location,
       );
 
@@ -335,6 +384,10 @@ class ApplicationViewModel extends BaseViewModel {
 
   bool isApplicantFormValid() {
     return applicantFormKey.currentState!.validate();
+  }
+
+  bool isContractorFormValid() {
+    return contractorFormKey.currentState!.validate();
   }
 
   bool isLocationFormValid() {
