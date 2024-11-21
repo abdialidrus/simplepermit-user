@@ -5,30 +5,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch development",
+      "name": "stacked_permit_user_app",
       "request": "launch",
-      "type": "dart",
-      "program": "lib/main_development.dart",
-      "args": [
-        "--flavor",
-        "development",
-        "--target",
-        "lib/main_development.dart"
-      ]
+      "type": "dart"
     },
     {
-      "name": "Launch staging",
+      "name": "stacked_permit_user_app (profile mode)",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_staging.dart",
-      "args": ["--flavor", "staging", "--target", "lib/main_staging.dart"]
+      "flutterMode": "profile"
     },
     {
-      "name": "Launch production",
+      "name": "stacked_permit_user_app (release mode)",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main_production.dart",
-      "args": ["--flavor", "production", "--target", "lib/main_production.dart"]
+      "flutterMode": "release"
     }
   ]
 }
