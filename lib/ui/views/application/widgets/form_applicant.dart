@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_permit_user_app/ui/common/ui_helpers.dart';
-import 'package:stacked_permit_user_app/ui/views/application/application_viewmodel.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/address_form_fields.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/form_subtitle.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/input_text_field.dart';
+import 'package:permit_user_app/ui/common/ui_helpers.dart';
+import 'package:permit_user_app/ui/views/application/application_viewmodel.dart';
+import 'package:permit_user_app/ui/views/application/widgets/address_form_fields.dart';
+import 'package:permit_user_app/ui/views/application/widgets/form_subtitle.dart';
+import 'package:permit_user_app/ui/views/application/widgets/input_text_field.dart';
 
 class ApplicantForm extends ViewModelWidget<ApplicationViewModel> {
   const ApplicantForm({super.key});

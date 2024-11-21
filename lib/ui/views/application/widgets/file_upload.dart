@@ -3,10 +3,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:marquee/marquee.dart';
-import 'package:stacked_permit_user_app/ui/common/app_colors.dart';
-import 'package:stacked_permit_user_app/ui/common/app_typography.dart';
-import 'package:stacked_permit_user_app/ui/common/ui_helpers.dart';
-import 'package:stacked_permit_user_app/ui/widgets/common/secondary_small_button/secondary_small_button.dart';
+import 'package:permit_user_app/ui/common/app_colors.dart';
+import 'package:permit_user_app/ui/common/app_typography.dart';
+import 'package:permit_user_app/ui/common/ui_helpers.dart';
+import 'package:permit_user_app/ui/widgets/common/secondary_small_button/secondary_small_button.dart';
 
 class FileUpload extends StatelessWidget {
   const FileUpload({

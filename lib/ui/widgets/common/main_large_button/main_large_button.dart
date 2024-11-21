@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stacked_permit_user_app/ui/common/app_typography.dart';
-import 'package:stacked_permit_user_app/ui/widgets/common/main_button/main_button.dart';
+import 'package:permit_user_app/ui/common/app_typography.dart';
+import 'package:permit_user_app/ui/widgets/common/main_button/main_button.dart';
 
 class MainLargeButton extends StatelessWidget {
   const MainLargeButton({

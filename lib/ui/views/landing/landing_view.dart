@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_permit_user_app/ui/common/app_typography.dart';
-import 'package:stacked_permit_user_app/ui/common/ui_helpers.dart';
-import 'package:stacked_permit_user_app/ui/widgets/common/main_large_button/main_large_button.dart';
+import 'package:permit_user_app/ui/common/app_typography.dart';
+import 'package:permit_user_app/ui/common/ui_helpers.dart';
+import 'package:permit_user_app/ui/widgets/common/main_large_button/main_large_button.dart';
 
 import 'landing_viewmodel.dart';
 

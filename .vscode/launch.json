@@ -5,18 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "stacked_permit_user_app",
+      "name": "permit_user_app",
       "request": "launch",
       "type": "dart"
     },
     {
-      "name": "stacked_permit_user_app (profile mode)",
+      "name": "permit_user_app (profile mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile"
     },
     {
-      "name": "stacked_permit_user_app (release mode)",
+      "name": "permit_user_app (release mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"

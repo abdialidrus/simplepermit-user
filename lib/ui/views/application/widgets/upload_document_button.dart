@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:stacked_permit_user_app/ui/common/app_typography.dart';
+import 'package:permit_user_app/ui/common/app_typography.dart';
 
 class UploadDocumentButton extends StatelessWidget {
   const UploadDocumentButton({super.key});

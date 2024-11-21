@@ -1,6 +1,6 @@
 {
-    "name": "stacked_permit_user_app",
-    "short_name": "stacked_permit_user_app",
+    "name": "permit_user_app",
+    "short_name": "permit_user_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

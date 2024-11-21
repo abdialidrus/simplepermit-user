@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stacked_permit_user_app/ui/common/app_typography.dart';
+import 'package:permit_user_app/ui/common/app_typography.dart';
 
 class StepProgressIndicator extends StatelessWidget {
   const StepProgressIndicator({required this.currentStep, super.key});

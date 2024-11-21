@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_permit_user_app/ui/common/app_colors.dart';
-import 'package:stacked_permit_user_app/ui/common/app_typography.dart';
-import 'package:stacked_permit_user_app/ui/common/ui_helpers.dart';
-import 'package:stacked_permit_user_app/ui/views/application/application_viewmodel.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/form_subtitle.dart';
+import 'package:permit_user_app/ui/common/app_colors.dart';
+import 'package:permit_user_app/ui/common/app_typography.dart';
+import 'package:permit_user_app/ui/common/ui_helpers.dart';
+import 'package:permit_user_app/ui/views/application/application_viewmodel.dart';
+import 'package:permit_user_app/ui/views/application/widgets/form_subtitle.dart';
 
 class CommunityForm extends ViewModelWidget<ApplicationViewModel> {
   const CommunityForm({super.key});

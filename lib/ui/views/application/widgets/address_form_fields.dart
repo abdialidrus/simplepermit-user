@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stacked_permit_user_app/ui/common/ui_helpers.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/input_text_field.dart';
+import 'package:permit_user_app/ui/common/ui_helpers.dart';
+import 'package:permit_user_app/ui/views/application/widgets/input_text_field.dart';
 
 class AddressFormFields extends StatelessWidget {
   const AddressFormFields({

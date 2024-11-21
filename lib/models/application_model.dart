@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:stacked_permit_user_app/models/applicant_model.dart';
-import 'package:stacked_permit_user_app/models/contractor_model.dart';
-import 'package:stacked_permit_user_app/models/location_model.dart';
+import 'package:permit_user_app/models/applicant_model.dart';
+import 'package:permit_user_app/models/contractor_model.dart';
+import 'package:permit_user_app/models/location_model.dart';
 
 class ApplicationModel extends Equatable {
   final ApplicantModel applicant;

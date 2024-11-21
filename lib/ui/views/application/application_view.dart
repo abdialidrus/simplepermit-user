@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_permit_user_app/ui/common/app_typography.dart';
-import 'package:stacked_permit_user_app/ui/common/ui_helpers.dart';
-import 'package:stacked_permit_user_app/ui/views/application/acknowledgement_view.dart';
-import 'package:stacked_permit_user_app/ui/views/application/submission_complete_view.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/form_applicant.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/form_community.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/form_contractor.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/form_location.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/form_user_terms.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/next_button.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/previous_button.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/step_progress_indicator.dart';
-import 'package:stacked_permit_user_app/ui/views/application/widgets/submit_button.dart';
-import 'package:stacked_permit_user_app/ui/views/home/widgets/user_type_menu_item.dart';
-import 'package:stacked_permit_user_app/ui/widgets/common/main_small_button/main_small_button.dart';
+import 'package:permit_user_app/ui/common/app_typography.dart';
+import 'package:permit_user_app/ui/common/ui_helpers.dart';
+import 'package:permit_user_app/ui/views/application/acknowledgement_view.dart';
+import 'package:permit_user_app/ui/views/application/submission_complete_view.dart';
+import 'package:permit_user_app/ui/views/application/widgets/form_applicant.dart';
+import 'package:permit_user_app/ui/views/application/widgets/form_community.dart';
+import 'package:permit_user_app/ui/views/application/widgets/form_contractor.dart';
+import 'package:permit_user_app/ui/views/application/widgets/form_location.dart';
+import 'package:permit_user_app/ui/views/application/widgets/form_user_terms.dart';
+import 'package:permit_user_app/ui/views/application/widgets/next_button.dart';
+import 'package:permit_user_app/ui/views/application/widgets/previous_button.dart';
+import 'package:permit_user_app/ui/views/application/widgets/step_progress_indicator.dart';
+import 'package:permit_user_app/ui/views/application/widgets/submit_button.dart';
+import 'package:permit_user_app/ui/views/home/widgets/user_type_menu_item.dart';
+import 'package:permit_user_app/ui/widgets/common/main_small_button/main_small_button.dart';
 
 import 'application_viewmodel.dart';
 

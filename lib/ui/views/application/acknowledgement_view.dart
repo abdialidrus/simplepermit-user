@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stacked_permit_user_app/ui/common/app_typography.dart';
-import 'package:stacked_permit_user_app/ui/common/ui_helpers.dart';
-import 'package:stacked_permit_user_app/ui/widgets/common/main_small_button/main_small_button.dart';
+import 'package:permit_user_app/ui/common/app_typography.dart';
+import 'package:permit_user_app/ui/common/ui_helpers.dart';
+import 'package:permit_user_app/ui/widgets/common/main_small_button/main_small_button.dart';
 
 class AcknowledgementView extends StatelessWidget {
   const AcknowledgementView({

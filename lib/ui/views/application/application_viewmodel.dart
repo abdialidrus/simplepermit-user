@@ -4,14 +4,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_permit_user_app/app/app.locator.dart';
-import 'package:stacked_permit_user_app/app/app.logger.dart';
-import 'package:stacked_permit_user_app/app/app.router.dart';
-import 'package:stacked_permit_user_app/models/applicant_model.dart';
-import 'package:stacked_permit_user_app/models/application_model.dart';
-import 'package:stacked_permit_user_app/models/contractor_model.dart';
-import 'package:stacked_permit_user_app/models/location_model.dart';
-import 'package:stacked_permit_user_app/services/application_service.dart';
+import 'package:permit_user_app/app/app.locator.dart';
+import 'package:permit_user_app/app/app.logger.dart';
+import 'package:permit_user_app/app/app.router.dart';
+import 'package:permit_user_app/models/applicant_model.dart';
+import 'package:permit_user_app/models/application_model.dart';
+import 'package:permit_user_app/models/contractor_model.dart';
+import 'package:permit_user_app/models/location_model.dart';
+import 'package:permit_user_app/services/application_service.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 enum ApplicationStatus { collecting, loading, submitted }

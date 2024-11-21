@@ -1,4 +1,4 @@
-package com.example.stacked_permit_user_app
+package com.example.permit_user_app
 
 import io.flutter.embedding.android.FlutterActivity
 

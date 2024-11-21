@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stacked_permit_user_app/ui/widgets/common/main_small_button/main_small_button.dart';
+import 'package:permit_user_app/ui/widgets/common/main_small_button/main_small_button.dart';
 
 class SubmitButton extends StatelessWidget {
   const SubmitButton({required this.enabled, required this.onTap, super.key});

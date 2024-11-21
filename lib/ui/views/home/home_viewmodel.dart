@@ -1,7 +1,7 @@
-import 'package:stacked_permit_user_app/app/app.locator.dart';
+import 'package:permit_user_app/app/app.locator.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_permit_user_app/app/app.router.dart';
-import 'package:stacked_permit_user_app/ui/views/home/widgets/user_type_menu_item.dart';
+import 'package:permit_user_app/app/app.router.dart';
+import 'package:permit_user_app/ui/views/home/widgets/user_type_menu_item.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class HomeViewModel extends BaseViewModel {

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:stacked_permit_user_app/app/app.logger.dart';
-import 'package:stacked_permit_user_app/models/application_model.dart';
+import 'package:permit_user_app/app/app.logger.dart';
+import 'package:permit_user_app/models/application_model.dart';
 
 class ApplicationService {
   final log = getLogger('ApplicationService');

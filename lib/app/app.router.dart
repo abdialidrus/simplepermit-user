@@ -7,16 +7,14 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:flutter/material.dart' as _i6;
 import 'package:flutter/material.dart';
-import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_permit_user_app/ui/views/application/application_view.dart'
+import 'package:permit_user_app/ui/views/application/application_view.dart'
     as _i5;
-import 'package:stacked_permit_user_app/ui/views/home/home_view.dart' as _i2;
-import 'package:stacked_permit_user_app/ui/views/home/widgets/user_type_menu_item.dart'
+import 'package:permit_user_app/ui/views/home/home_view.dart' as _i2;
+import 'package:permit_user_app/ui/views/home/widgets/user_type_menu_item.dart'
     as _i7;
-import 'package:stacked_permit_user_app/ui/views/landing/landing_view.dart'
-    as _i4;
-import 'package:stacked_permit_user_app/ui/views/startup/startup_view.dart'
-    as _i3;
+import 'package:permit_user_app/ui/views/landing/landing_view.dart' as _i4;
+import 'package:permit_user_app/ui/views/startup/startup_view.dart' as _i3;
+import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i8;
 
 class Routes {

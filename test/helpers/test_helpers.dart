@@ -1,8 +1,8 @@
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:stacked_permit_user_app/app/app.locator.dart';
+import 'package:permit_user_app/app/app.locator.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:stacked_permit_user_app/services/application_service.dart';
+import 'package:permit_user_app/services/application_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
