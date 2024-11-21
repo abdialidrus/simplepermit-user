@@ -24,6 +24,7 @@ class ApplicationViewModel extends BaseViewModel {
   final log = getLogger('ApplicationViewModel');
   final _applicationService = locator<ApplicationService>();
   final _navigationService = locator<NavigationService>();
+  final _dialogService = locator<DialogService>();
 
   final applicantFormKey = GlobalKey<FormState>();
   final applicantNameController = TextEditingController();
@@ -98,8 +99,22 @@ class ApplicationViewModel extends BaseViewModel {
     return isOnFirstStep;
   }
 
-  void navigateBack() {
-    _navigationService.back();
+  void navigateBack() async {
+    if (activeStep == 1) {
+      final dialogResponse = await _dialogService.showConfirmationDialog(
+        title: 'Confirm',
+        description:
+            'Are you sure you want to go back? You will lose all your progress.',
+        confirmationTitle: 'Yes, go back',
+        cancelTitle: 'No, cancel',
+      );
+
+      if (dialogResponse!.confirmed) {
+        _navigationService.back();
+      }
+    } else {
+      _navigationService.back();
+    }
   }
 
   void onCommunitySelectionChanged(int? value) {
