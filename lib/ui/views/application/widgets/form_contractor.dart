@@ -21,7 +21,8 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (!viewModel.canShowContractorForm) ...[
+            if (!viewModel.canShowContractorForm &&
+                !viewModel.isEditingContractor) ...[
               FormSubtitle(
                   label: viewModel.contractors.length > 1
                       ? 'CONTRACTORS'
@@ -42,6 +43,7 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
                     hint: contractor.individualName,
                     showSuffixArrow: true,
                     enabled: false,
+                    onTap: () => viewModel.startEditingContractor(contractor),
                   ),
                   verticalSpaceSmall,
                 ],
@@ -62,8 +64,12 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
             ],
 
             //
-            if (viewModel.canShowContractorForm) ...[
-              const FormSubtitle(label: 'CONTRACTOR INFORMATION'),
+            if (viewModel.canShowContractorForm ||
+                viewModel.isEditingContractor) ...[
+              FormSubtitle(
+                label:
+                    '${viewModel.isEditingContractor ? 'UPDATE' : 'ADD'} CONTRACTOR INFORMATION',
+              ),
               verticalSpaceSmall,
               InputTextField(
                 label: 'Company or Individual Name',

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 
 class ContractorModel extends Equatable {
@@ -11,6 +13,7 @@ class ContractorModel extends Equatable {
   final String zip;
   final String street;
   final List<int> licenseDocumentIds;
+  final List<File>? licenseDocuments;
 
   const ContractorModel({
     required this.individualName,
@@ -23,6 +26,7 @@ class ContractorModel extends Equatable {
     required this.zip,
     required this.street,
     required this.licenseDocumentIds,
+    this.licenseDocuments,
   });
 
   Map<String, dynamic> toJson() => {

@@ -11,6 +11,7 @@ class InputTextField extends StatelessWidget {
     this.maxLines = 1,
     this.showSuffixArrow = false,
     this.enabled = true,
+    this.onTap,
   });
 
   final String? label;
@@ -20,56 +21,62 @@ class InputTextField extends StatelessWidget {
   final bool showSuffixArrow;
   final TextEditingController controller;
   final bool? enabled;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (label != null) ...[
-          Text(
-            label!,
-            style: ktsLabelRegular,
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (label != null) ...[
+            Text(
+              label!,
+              style: ktsLabelRegular,
+            ),
+            const SizedBox(height: 6),
+          ],
+          TextFormField(
+            controller: controller,
+            maxLines: maxLines,
+            minLines: maxLines,
+            validator: validator,
+            enabled: enabled,
+            decoration: InputDecoration(
+              hintText: hint ?? label,
+              hintStyle:
+                  ktsSmallRegular.copyWith(color: const Color(0x80000000)),
+              filled: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              fillColor: Colors.white,
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.red),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              suffixIcon:
+                  showSuffixArrow ? const Icon(Icons.chevron_right) : null,
+            ),
           ),
-          const SizedBox(height: 6),
         ],
-        TextFormField(
-          controller: controller,
-          maxLines: maxLines,
-          minLines: maxLines,
-          validator: validator,
-          enabled: enabled,
-          decoration: InputDecoration(
-            hintText: hint ?? label,
-            hintStyle: ktsSmallRegular.copyWith(color: const Color(0x80000000)),
-            filled: true,
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Theme.of(context).primaryColor),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.red),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Theme.of(context).primaryColor),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            suffixIcon:
-                showSuffixArrow ? const Icon(Icons.chevron_right) : null,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

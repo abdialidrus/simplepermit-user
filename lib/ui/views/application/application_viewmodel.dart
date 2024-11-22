@@ -50,6 +50,8 @@ class ApplicationViewModel extends BaseViewModel {
   final contractorZipCodeController = TextEditingController();
   List<ContractorModel> contractors = [];
   bool canShowContractorForm = false;
+  bool isEditingContractor = false;
+  int? editingContractorIndex;
 
   //
   final locationFormKey = GlobalKey<FormState>();
@@ -63,7 +65,6 @@ class ApplicationViewModel extends BaseViewModel {
   final projectCostOfConstructionController = TextEditingController();
 
   //
-  CommunityModel? selectedCommunity;
   int activeStep = 1;
   bool get isLastStep => activeStep == 5;
   ApplicationStatus status = ApplicationStatus.collecting;
@@ -76,6 +77,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   //
   List<CommunityModel> communities = [];
+  CommunityModel? selectedCommunity;
 
   //
   bool isShowAcknowledgement = false;
@@ -91,7 +93,13 @@ class ApplicationViewModel extends BaseViewModel {
   void hideContractorForm() {
     canShowContractorForm = false;
     resetContractorForm();
+    cancelEditingContractor();
     rebuildUi();
+  }
+
+  void cancelEditingContractor() {
+    isEditingContractor = false;
+    editingContractorIndex = null;
   }
 
   void addContractor() async {
@@ -125,10 +133,16 @@ class ApplicationViewModel extends BaseViewModel {
       country: contractorCityController.text,
       zip: contractorStreetController.text,
       street: contractorZipCodeController.text,
-      licenseDocumentIds: contractorLicenseDocumentIds,
+      licenseDocumentIds: contractorLicenseDocumentIds.toList(),
+      licenseDocuments: contractorLicenseDocuments.toList(),
     );
 
-    contractors.add(contractorModel);
+    if (editingContractorIndex != null) {
+      contractors[editingContractorIndex!] = contractorModel;
+    } else {
+      contractors.add(contractorModel);
+    }
+
     hideContractorForm();
   }
 
@@ -162,11 +176,12 @@ class ApplicationViewModel extends BaseViewModel {
     }
 
     if (!isOnFirstStep) {
-      if (activeStep == 2 && canShowContractorForm) {
-        canShowContractorForm = false;
-        resetContractorForm();
-        rebuildUi();
-        return false;
+      if (activeStep == 2) {
+        if (canShowContractorForm || isEditingContractor) {
+          hideContractorForm();
+          rebuildUi();
+          return false;
+        }
       }
 
       previousStep();
@@ -273,6 +288,30 @@ class ApplicationViewModel extends BaseViewModel {
     }
   }
 
+  void startEditingContractor(ContractorModel contractor) {
+    isEditingContractor = true;
+    editingContractorIndex = contractors.indexOf(contractor);
+
+    contractorCompanyOrIndividualNameController.text =
+        contractor.individualName;
+    contractorApplicableTradesController.text = contractor.trade;
+    contractorEmailController.text = contractor.email;
+    contractorPhoneNumberController.text = contractor.phoneNumber;
+    contractorCountryController.text = contractor.country;
+    contractorStateController.text = contractor.state;
+    contractorCityController.text = contractor.city;
+    contractorStreetController.text = contractor.street;
+    contractorZipCodeController.text = contractor.zip;
+    contractorLicenseDocumentIds.clear();
+    contractorLicenseDocumentIds.addAll(contractor.licenseDocumentIds);
+    contractorLicenseDocuments.clear();
+    if (contractor.licenseDocuments != null) {
+      contractorLicenseDocuments.addAll(contractor.licenseDocuments!);
+    }
+
+    rebuildUi();
+  }
+
   void pickContractorLicenseDocuments() async {
     final List<File>? result = await _pickDocuments();
 
@@ -321,7 +360,6 @@ class ApplicationViewModel extends BaseViewModel {
 
       SmartDialog.dismiss();
 
-      contractorLicenseDocuments.clear();
       contractorLicenseDocumentIds.addAll(documentIds);
 
       return true;

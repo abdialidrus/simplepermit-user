@@ -131,37 +131,64 @@ class ApplicationView extends StackedView<ApplicationViewModel> {
                                       ),
                                     ],
                                   )
-                                : Row(
-                                    children: [
-                                      if (activeStep > 1) ...[
-                                        Expanded(
-                                          child: PreviousButton(
-                                            enabled: true,
-                                            onTap: status.isLoading
-                                                ? () {}
-                                                : () =>
-                                                    viewModel.previousStep(),
+                                : viewModel.isEditingContractor
+                                    ? Row(
+                                        children: [
+                                          Expanded(
+                                            child: MainSmallButton(
+                                              label: 'Save',
+                                              onTap: () =>
+                                                  viewModel.addContractor(),
+                                              leadingIcon: const Icon(
+                                                Icons.save,
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                      ],
-                                      Expanded(
-                                        child: isLastStep
-                                            ? SubmitButton(
-                                                enabled: true,
-                                                onTap: () => viewModel
-                                                    .showAcknowledgement(),
-                                              )
-                                            : NextButton(
+                                          horizontalSpaceSmall,
+                                          Expanded(
+                                            child: TextButton(
+                                              onPressed: () => viewModel
+                                                  .hideContractorForm(),
+                                              child: Text(
+                                                'Cancel',
+                                                style: ktsSmallMedium,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Row(
+                                        children: [
+                                          if (activeStep > 1) ...[
+                                            Expanded(
+                                              child: PreviousButton(
                                                 enabled: true,
                                                 onTap: status.isLoading
                                                     ? () {}
-                                                    : () =>
-                                                        viewModel.nextStep(),
+                                                    : () => viewModel
+                                                        .previousStep(),
                                               ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                          ],
+                                          Expanded(
+                                            child: isLastStep
+                                                ? SubmitButton(
+                                                    enabled: true,
+                                                    onTap: () => viewModel
+                                                        .showAcknowledgement(),
+                                                  )
+                                                : NextButton(
+                                                    enabled: true,
+                                                    onTap: status.isLoading
+                                                        ? () {}
+                                                        : () => viewModel
+                                                            .nextStep(),
+                                                  ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
                           ),
                         ),
                       ),
