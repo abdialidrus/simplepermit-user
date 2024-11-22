@@ -22,7 +22,10 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (!viewModel.canShowContractorForm) ...[
-              const FormSubtitle(label: 'CONTRACTOR'),
+              FormSubtitle(
+                  label: viewModel.contractors.length > 1
+                      ? 'CONTRACTORS'
+                      : 'CONTRACTOR'),
               if (viewModel.contractors.isEmpty) ...[
                 verticalSpaceSmall,
                 Text(
@@ -30,7 +33,6 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
                   style: ktsSmallRegular,
                 ),
               ],
-
               if (viewModel.contractors.isNotEmpty) ...[
                 verticalSpaceSmall,
                 for (var contractor in viewModel.contractors) ...[
@@ -44,16 +46,6 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
                   verticalSpaceSmall,
                 ],
               ],
-
-              // const InputTextField(
-              //   hint: 'Jake Doe',
-              //   showSuffixArrow: true,
-              // ),
-              // verticalSpaceSmall,
-              // const InputTextField(
-              //   hint: 'Mark Dela Cruz',
-              //   showSuffixArrow: true,
-              // ),
               verticalSpaceMedium,
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.5,

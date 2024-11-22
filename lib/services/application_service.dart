@@ -2,16 +2,81 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:permit_user_app/app/app.logger.dart';
 import 'package:permit_user_app/models/application_model.dart';
+import 'package:permit_user_app/models/community_model.dart';
 
 class ApplicationService {
   final log = getLogger('ApplicationService');
 
   final _dio = Dio();
 
+  final String baseUrl = 'https://permit-api.brainfuelstation.com/api';
+
+  final Map<String, dynamic> sampleCommunityResponse = {
+    "success": true,
+    "data": [
+      {
+        "communityId": 1,
+        "communityName": "My Community",
+        "workEmail": "contact@community.com",
+        "phoneNumber": "1234567890",
+        "state": "California",
+        "city": "Los Angeles",
+        "country": "USA",
+        "zipcode": "90001",
+        "street": "123 Community St",
+        "region": "Region Name",
+        "permitType": "Type A",
+        "status": "Approved",
+        "userId": 1
+      }
+    ],
+    "pagination": {
+      "totalCount": 20,
+      "totalPages": 2,
+      "currentPage": 1,
+      "pageSize": 10
+    }
+  };
+
+  Future<List<CommunityModel>> getNearbyCommunities(
+      int page, String filter) async {
+    try {
+      const pageSize = 20;
+      final endpoint = '$baseUrl/communities';
+      final parameters = {
+        'page': page,
+        'filter': filter,
+        'pageSize': pageSize,
+      };
+
+      final data = sampleCommunityResponse['data'] as List;
+
+      return data.map((e) => CommunityModel.fromJson(e)).toList();
+
+      // final response = await _dio.get(endpoint, queryParameters: parameters);
+
+      // if (response.statusCode == 200) {
+      //   if (response.data['success'] != true) {
+      //     throw Exception('Failed to get nearby communities');
+      //   }
+
+      //   final data = response.data['data'] as List;
+
+      //   return data.map((e) => CommunityModel.fromJson(e)).toList();
+      // } else {
+      //   log.e('Failed to get nearby communities: ${response.statusCode}');
+      //   log.e(response.data);
+      //   throw Exception('Failed to get nearby communities');
+      // }
+    } catch (e) {
+      log.e(e);
+      throw Exception('Failed to get nearby communities');
+    }
+  }
+
   Future<void> submitApplication(ApplicationModel application) async {
     try {
-      const endpoint =
-          'https://permit-api.brainfuelstation.com/api/application';
+      final endpoint = '$baseUrl/application';
       final response = await _dio.post(endpoint, data: application.toJson());
 
       if (response.statusCode == 200) {
@@ -29,8 +94,7 @@ class ApplicationService {
 
   Future<List<int>> uploadDocuments(List<File> files) async {
     try {
-      const uploadUrl =
-          'https://permit-api.brainfuelstation.com/api/attachments/upload-files';
+      final uploadUrl = '$baseUrl/attachments/upload-files';
 
       // Prepare the form data
       FormData formData = FormData();

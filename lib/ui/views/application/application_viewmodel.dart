@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:permit_user_app/models/community_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:permit_user_app/app/app.locator.dart';
 import 'package:permit_user_app/app/app.logger.dart';
@@ -62,7 +63,7 @@ class ApplicationViewModel extends BaseViewModel {
   final projectCostOfConstructionController = TextEditingController();
 
   //
-  int selectedCommunity = 1;
+  CommunityModel? selectedCommunity;
   int activeStep = 1;
   bool get isLastStep => activeStep == 5;
   ApplicationStatus status = ApplicationStatus.collecting;
@@ -72,6 +73,9 @@ class ApplicationViewModel extends BaseViewModel {
   List<File> constructionDocuments = [];
   List<int> contractorLicenseDocumentIds = [];
   List<int> constructionDocumentIds = [];
+
+  //
+  List<CommunityModel> communities = [];
 
   //
   bool isShowAcknowledgement = false;
@@ -95,7 +99,7 @@ class ApplicationViewModel extends BaseViewModel {
 
     if (contractorLicenseDocuments.isEmpty) {
       SmartDialog.showNotify(
-        msg: 'Please upload at least one construction documents',
+        msg: 'Please upload at least one contractor license document',
         notifyType: NotifyType.alert,
       );
       return;
@@ -175,8 +179,8 @@ class ApplicationViewModel extends BaseViewModel {
     _navigationService.back();
   }
 
-  void onCommunitySelectionChanged(int? value) {
-    selectedCommunity = value ?? 1;
+  void onCommunitySelectionChanged(CommunityModel? value) {
+    selectedCommunity = value;
     rebuildUi();
   }
 
@@ -218,6 +222,19 @@ class ApplicationViewModel extends BaseViewModel {
         );
         return;
       }
+
+      // get nearby communities
+      await getNearbyCommunities();
+    }
+
+    if (activeStep == 4) {
+      if (selectedCommunity == null) {
+        SmartDialog.showNotify(
+          msg: 'Please select a community',
+          notifyType: NotifyType.alert,
+        );
+        return;
+      }
     }
 
     activeStep++;
@@ -227,6 +244,33 @@ class ApplicationViewModel extends BaseViewModel {
   void previousStep() {
     activeStep--;
     rebuildUi();
+  }
+
+  Future<void> getNearbyCommunities() async {
+    try {
+      int page = 1;
+      const filter = 'New York';
+
+      SmartDialog.showLoading(msg: 'Loading nearby communities');
+
+      await Future.delayed(const Duration(seconds: 3));
+
+      final communities =
+          await _applicationService.getNearbyCommunities(page, filter);
+
+      this.communities.clear();
+      this.communities.addAll(communities);
+      if (this.communities.isNotEmpty) {
+        selectedCommunity = this.communities.first;
+      }
+
+      SmartDialog.dismiss();
+
+      log.i(communities);
+    } catch (e) {
+      log.e(e);
+      SmartDialog.dismiss();
+    }
   }
 
   void pickContractorLicenseDocuments() async {
@@ -306,13 +350,13 @@ class ApplicationViewModel extends BaseViewModel {
       final List<int> documentIds =
           await _applicationService.uploadDocuments(constructionDocuments);
 
-      SmartDialog.dismiss();
+      await SmartDialog.dismiss();
 
       constructionDocumentIds.clear();
       constructionDocumentIds.addAll(documentIds);
       return true;
     } catch (e) {
-      SmartDialog.dismiss();
+      await SmartDialog.dismiss();
       log.e(e);
 
       return false;

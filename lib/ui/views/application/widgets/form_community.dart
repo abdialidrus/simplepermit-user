@@ -28,70 +28,33 @@ class CommunityForm extends ViewModelWidget<ApplicationViewModel> {
               borderRadius: BorderRadius.circular(16),
             ),
             padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                ListTile(
-                  title: const Text(
-                    '''Beirut Community , 3 km , beirut@municipality.lb, Beirut Central District, Beirut''',
+            child: viewModel.communities.isEmpty
+                ? const Text('No communities found')
+                : Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: viewModel.communities
+                        .map(
+                          (e) => ListTile(
+                            title: Text(
+                                '${e.communityName}, ${e.workEmail}, ${e.state} ${e.country}'),
+                            titleTextStyle: ktsSmallRegular,
+                            textColor: Colors.black,
+                            leading: Radio(
+                              value: e.communityId,
+                              groupValue:
+                                  viewModel.selectedCommunity!.communityId,
+                              onChanged: (value) =>
+                                  viewModel.onCommunitySelectionChanged(e),
+                            ),
+                            onTap: () =>
+                                viewModel.onCommunitySelectionChanged(e),
+                            dense: true,
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        )
+                        .toList(),
                   ),
-                  titleTextStyle: ktsSmallRegular,
-                  textColor: Colors.black,
-                  leading: Radio(
-                    value: 1,
-                    groupValue: viewModel.selectedCommunity,
-                    onChanged: viewModel.onCommunitySelectionChanged,
-                  ),
-                  onTap: () => viewModel.onCommunitySelectionChanged(1),
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                ),
-                ListTile(
-                  title: const Text(
-                    '''Jdeideh Community, 7 km, jdeideh@municipality.lb, Jdeideh Main Street, Jdeideh''',
-                  ),
-                  titleTextStyle: ktsSmallRegular,
-                  textColor: Colors.black,
-                  leading: Radio(
-                    value: 2,
-                    groupValue: viewModel.selectedCommunity,
-                    onChanged: viewModel.onCommunitySelectionChanged,
-                  ),
-                  onTap: () => viewModel.onCommunitySelectionChanged(2),
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                ),
-                ListTile(
-                  title: const Text(
-                    '''Baabda Community, 10 km, baabda@municipality.lb, Baabda City Center, Baabda''',
-                  ),
-                  titleTextStyle: ktsSmallRegular,
-                  textColor: Colors.black,
-                  leading: Radio(
-                    value: 3,
-                    groupValue: viewModel.selectedCommunity,
-                    onChanged: viewModel.onCommunitySelectionChanged,
-                  ),
-                  onTap: () => viewModel.onCommunitySelectionChanged(3),
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                ),
-                ListTile(
-                  title: const Text(
-                    '''Sin el Fil Community, 12 km, sinelfil@municipality.lb, Sin el Fil Road, Sin el Fil''',
-                  ),
-                  titleTextStyle: ktsSmallRegular,
-                  textColor: Colors.black,
-                  leading: Radio(
-                    value: 4,
-                    groupValue: viewModel.selectedCommunity,
-                    onChanged: viewModel.onCommunitySelectionChanged,
-                  ),
-                  onTap: () => viewModel.onCommunitySelectionChanged(4),
-                  dense: true,
-                  visualDensity: VisualDensity.compact,
-                ),
-              ],
-            ),
           ),
         ],
       ),
