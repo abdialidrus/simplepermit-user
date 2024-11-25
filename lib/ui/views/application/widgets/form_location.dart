@@ -34,6 +34,35 @@ class LocationForm extends ViewModelWidget<ApplicationViewModel> {
               streetValidator: viewModel.validateLocationStreet,
               zipCodeValidator: viewModel.validateLocationZipCode,
             ),
+            verticalSpaceSmall,
+
+            //
+            Text(
+              'Permit Type',
+              style: ktsLabelRegular,
+            ),
+            verticalSpaceExtraSmall,
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              padding: const EdgeInsets.only(left: 10, bottom: 2),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  value: viewModel.defaultPermitType,
+                  items: permitTypes.map((type) {
+                    return DropdownMenuItem(
+                      value: type,
+                      child: Text(type, style: ktsSmallRegular),
+                    );
+                  }).toList(),
+                  style: ktsSmallRegular.copyWith(color: Colors.black),
+                  isExpanded: true,
+                  onChanged: viewModel.changePermitType,
+                ),
+              ),
+            ),
             verticalSpaceLarge,
 
             //

@@ -17,6 +17,8 @@ import 'package:stacked_services/stacked_services.dart';
 
 enum ApplicationStatus { collecting, loading, submitted }
 
+const permitTypes = ['Residential', 'Commercial'];
+
 extension ApplicationStatusX on ApplicationStatus {
   bool get isLoading => this == ApplicationStatus.loading;
 }
@@ -48,10 +50,6 @@ class ApplicationViewModel extends BaseViewModel {
   final contractorCityController = TextEditingController();
   final contractorStreetController = TextEditingController();
   final contractorZipCodeController = TextEditingController();
-  List<ContractorModel> contractors = [];
-  bool canShowContractorForm = false;
-  bool isEditingContractor = false;
-  int? editingContractorIndex;
 
   //
   final locationFormKey = GlobalKey<FormState>();
@@ -65,15 +63,23 @@ class ApplicationViewModel extends BaseViewModel {
   final projectCostOfConstructionController = TextEditingController();
 
   //
+  LocationModel? locationModel;
+
+  //
   int activeStep = 1;
   bool get isLastStep => activeStep == 5;
   ApplicationStatus status = ApplicationStatus.collecting;
 
   //
+  List<ContractorModel> contractors = [];
+  bool canShowContractorForm = false;
+  bool isEditingContractor = false;
+  int? editingContractorIndex;
   List<File> contractorLicenseDocuments = [];
   List<File> constructionDocuments = [];
   List<int> contractorLicenseDocumentIds = [];
   List<int> constructionDocumentIds = [];
+  String defaultPermitType = permitTypes[0];
 
   //
   List<CommunityModel> communities = [];
@@ -238,6 +244,8 @@ class ApplicationViewModel extends BaseViewModel {
         return;
       }
 
+      saveLocationData();
+
       // get nearby communities
       await getNearbyCommunities();
     }
@@ -261,17 +269,31 @@ class ApplicationViewModel extends BaseViewModel {
     rebuildUi();
   }
 
-  Future<void> getNearbyCommunities() async {
-    try {
-      int page = 1;
-      const filter = 'New York';
+  void saveLocationData() {
+    locationModel = LocationModel(
+      state: locationCountryController.text,
+      city: locationStateController.text,
+      country: locationCityController.text,
+      zip: locationStreetController.text,
+      street: locationZipCodeController.text,
+      description: projectDescriptionController.text,
+      cost: double.parse(projectCostOfConstructionController.text),
+      locationDocumentIds: constructionDocumentIds,
+      permitType: defaultPermitType,
+    );
+  }
 
+  Future<void> getNearbyCommunities() async {
+    if (locationModel == null) {
+      previousStep();
+      return;
+    }
+
+    try {
       SmartDialog.showLoading(msg: 'Loading nearby communities');
 
-      await Future.delayed(const Duration(seconds: 3));
-
       final communities =
-          await _applicationService.getNearbyCommunities(page, filter);
+          await _applicationService.getNearbyCommunities(locationModel!);
 
       this.communities.clear();
       this.communities.addAll(communities);
@@ -413,6 +435,13 @@ class ApplicationViewModel extends BaseViewModel {
 
   Future<void> submitApplication() async {
     try {
+      if (locationModel == null) {
+        SmartDialog.showNotify(
+            msg: 'Location data not valid', notifyType: NotifyType.alert);
+
+        return;
+      }
+
       final applicant = ApplicantModel(
         name: applicantNameController.text,
         country: applicantCountryController.text,
@@ -424,21 +453,12 @@ class ApplicationViewModel extends BaseViewModel {
         phoneNumber: applicantPhoneNumberController.text,
         notes: applicantNotesController.text,
       );
-      final location = LocationModel(
-        state: locationCountryController.text,
-        city: locationStateController.text,
-        country: locationCityController.text,
-        zip: locationStreetController.text,
-        street: locationZipCodeController.text,
-        description: projectDescriptionController.text,
-        cost: double.parse(projectCostOfConstructionController.text),
-        locationDocumentIds: constructionDocumentIds,
-      );
 
       final application = ApplicationModel(
         applicant: applicant,
         contractors: contractors,
-        location: location,
+        location: locationModel!,
+        communityRefId: selectedCommunity!.communityRefId,
       );
 
       SmartDialog.showLoading(msg: 'Submitting application');
@@ -650,5 +670,12 @@ class ApplicationViewModel extends BaseViewModel {
       return 'Cost of Construction is required';
     }
     return null;
+  }
+
+  void changePermitType(String? value) {
+    if (value == null) return;
+
+    defaultPermitType = value;
+    rebuildUi();
   }
 }

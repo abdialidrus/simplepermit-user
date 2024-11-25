@@ -8,6 +8,7 @@ class LocationModel extends Equatable {
   final String street;
   final String description;
   final double cost;
+  final String permitType;
   final List<int> locationDocumentIds;
 
   const LocationModel({
@@ -18,6 +19,7 @@ class LocationModel extends Equatable {
     required this.street,
     required this.description,
     required this.cost,
+    required this.permitType,
     required this.locationDocumentIds,
   });
 
@@ -29,6 +31,7 @@ class LocationModel extends Equatable {
         'street': street,
         'description': description,
         'cost': cost,
+        'permitType': permitType,
         'locationFiles': locationDocumentIds,
       };
 
@@ -41,6 +44,7 @@ class LocationModel extends Equatable {
         street,
         description,
         cost,
+        permitType,
         locationDocumentIds,
       ];
 }

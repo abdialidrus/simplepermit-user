@@ -37,13 +37,13 @@ class CommunityForm extends ViewModelWidget<ApplicationViewModel> {
                         .map(
                           (e) => ListTile(
                             title: Text(
-                                '${e.communityName}, ${e.workEmail}, ${e.state} ${e.country}'),
+                                '${e.name}, ${e.workEmail}, ${e.state} ${e.street}'),
                             titleTextStyle: ktsSmallRegular,
                             textColor: Colors.black,
                             leading: Radio(
-                              value: e.communityId,
+                              value: e.communityRefId,
                               groupValue:
-                                  viewModel.selectedCommunity!.communityId,
+                                  viewModel.selectedCommunity!.communityRefId,
                               onChanged: (value) =>
                                   viewModel.onCommunitySelectionChanged(e),
                             ),

@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:permit_user_app/app/app.logger.dart';
 import 'package:permit_user_app/models/application_model.dart';
 import 'package:permit_user_app/models/community_model.dart';
+import 'package:permit_user_app/models/location_model.dart';
 
 class ApplicationService {
   final log = getLogger('ApplicationService');
@@ -39,35 +40,36 @@ class ApplicationService {
   };
 
   Future<List<CommunityModel>> getNearbyCommunities(
-      int page, String filter) async {
+      LocationModel locationModel) async {
     try {
-      const pageSize = 20;
-      final endpoint = '$baseUrl/communities';
-      final parameters = {
-        'page': page,
-        'filter': filter,
-        'pageSize': pageSize,
+      final endpoint = '$baseUrl/communities/nearby';
+      final payload = {
+        'state': locationModel.state,
+        'city': locationModel.city,
+        'country': locationModel.country,
+        'street': locationModel.street,
+        'permitType': locationModel.permitType,
       };
 
-      final data = sampleCommunityResponse['data'] as List;
-
-      return data.map((e) => CommunityModel.fromJson(e)).toList();
+      // final data = sampleCommunityResponse['data'] as List;
+      // return data.map((e) => CommunityModel.fromJson(e)).toList();
 
       // final response = await _dio.get(endpoint, queryParameters: parameters);
+      final response = await _dio.post(endpoint, data: payload);
 
-      // if (response.statusCode == 200) {
-      //   if (response.data['success'] != true) {
-      //     throw Exception('Failed to get nearby communities');
-      //   }
+      if (response.statusCode == 200) {
+        if (response.data['success'] != true) {
+          throw Exception('Failed to get nearby communities');
+        }
 
-      //   final data = response.data['data'] as List;
+        final data = response.data['data'] as List;
 
-      //   return data.map((e) => CommunityModel.fromJson(e)).toList();
-      // } else {
-      //   log.e('Failed to get nearby communities: ${response.statusCode}');
-      //   log.e(response.data);
-      //   throw Exception('Failed to get nearby communities');
-      // }
+        return data.map((e) => CommunityModel.fromJson(e)).toList();
+      } else {
+        log.e('Failed to get nearby communities: ${response.statusCode}');
+        log.e(response.data);
+        throw Exception('Failed to get nearby communities');
+      }
     } catch (e) {
       log.e(e);
       throw Exception('Failed to get nearby communities');
@@ -77,7 +79,9 @@ class ApplicationService {
   Future<void> submitApplication(ApplicationModel application) async {
     try {
       final endpoint = '$baseUrl/application';
-      final response = await _dio.post(endpoint, data: application.toJson());
+      final payload = application.toJson();
+      final payloadString = payload.toString();
+      final response = await _dio.post(endpoint, data: payload);
 
       if (response.statusCode == 200) {
         log.i('Application submitted successfully');
