@@ -6,10 +6,11 @@ class ApplicantModel extends Equatable {
   final String state;
   final String city;
   final String street;
-  final String zip;
+  final int zip;
   final String email;
   final String phoneNumber;
   final String notes;
+  final String role;
 
   const ApplicantModel({
     required this.name,
@@ -21,6 +22,7 @@ class ApplicantModel extends Equatable {
     required this.email,
     required this.phoneNumber,
     required this.notes,
+    required this.role,
   });
 
   Map<String, dynamic> toJson() => {
@@ -33,6 +35,7 @@ class ApplicantModel extends Equatable {
         'email': email,
         'phoneNumber': phoneNumber,
         'notes': notes,
+        'role': role,
       };
 
   @override
@@ -46,5 +49,6 @@ class ApplicantModel extends Equatable {
         email,
         phoneNumber,
         notes,
+        role,
       ];
 }

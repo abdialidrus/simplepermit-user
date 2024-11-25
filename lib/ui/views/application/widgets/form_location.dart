@@ -79,6 +79,8 @@ class LocationForm extends ViewModelWidget<ApplicationViewModel> {
               label: 'Cost of Construction',
               controller: viewModel.projectCostOfConstructionController,
               validator: viewModel.validateProjectCostOfConstruction,
+              digitsOnly: true,
+              keyboardType: TextInputType.number,
             ),
             verticalSpaceLarge,
 

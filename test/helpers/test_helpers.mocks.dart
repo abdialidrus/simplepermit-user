@@ -4,14 +4,16 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i6;
-import 'dart:io' as _i10;
+import 'dart:io' as _i12;
 import 'dart:ui' as _i7;
 
 import 'package:flutter/material.dart' as _i5;
 import 'package:logger/src/logger.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
-import 'package:permit_user_app/models/application_model.dart' as _i9;
+import 'package:permit_user_app/models/application_model.dart' as _i11;
+import 'package:permit_user_app/models/community_model.dart' as _i9;
+import 'package:permit_user_app/models/location_model.dart' as _i10;
 import 'package:permit_user_app/services/application_service.dart' as _i8;
 import 'package:stacked_services/stacked_services.dart' as _i3;
 
@@ -716,7 +718,41 @@ class MockApplicationService extends _i1.Mock
       ) as _i2.Logger);
 
   @override
-  _i6.Future<void> submitApplication(_i9.ApplicationModel? application) =>
+  String get baseUrl => (super.noSuchMethod(
+        Invocation.getter(#baseUrl),
+        returnValue: _i4.dummyValue<String>(
+          this,
+          Invocation.getter(#baseUrl),
+        ),
+        returnValueForMissingStub: _i4.dummyValue<String>(
+          this,
+          Invocation.getter(#baseUrl),
+        ),
+      ) as String);
+
+  @override
+  Map<String, dynamic> get sampleCommunityResponse => (super.noSuchMethod(
+        Invocation.getter(#sampleCommunityResponse),
+        returnValue: <String, dynamic>{},
+        returnValueForMissingStub: <String, dynamic>{},
+      ) as Map<String, dynamic>);
+
+  @override
+  _i6.Future<List<_i9.CommunityModel>> getNearbyCommunities(
+          _i10.LocationModel? locationModel) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getNearbyCommunities,
+          [locationModel],
+        ),
+        returnValue:
+            _i6.Future<List<_i9.CommunityModel>>.value(<_i9.CommunityModel>[]),
+        returnValueForMissingStub:
+            _i6.Future<List<_i9.CommunityModel>>.value(<_i9.CommunityModel>[]),
+      ) as _i6.Future<List<_i9.CommunityModel>>);
+
+  @override
+  _i6.Future<void> submitApplication(_i11.ApplicationModel? application) =>
       (super.noSuchMethod(
         Invocation.method(
           #submitApplication,
@@ -727,7 +763,7 @@ class MockApplicationService extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<List<int>> uploadDocuments(List<_i10.File>? files) =>
+  _i6.Future<List<int>> uploadDocuments(List<_i12.File>? files) =>
       (super.noSuchMethod(
         Invocation.method(
           #uploadDocuments,

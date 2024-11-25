@@ -50,6 +50,7 @@ class ApplicantForm extends ViewModelWidget<ApplicationViewModel> {
               hint: 'ex. janedoe@gmail.com',
               controller: viewModel.applicantEmailController,
               validator: viewModel.validateApplicantEmail,
+              keyboardType: TextInputType.emailAddress,
             ),
             verticalSpaceSmall,
             InputTextField(
@@ -57,6 +58,8 @@ class ApplicantForm extends ViewModelWidget<ApplicationViewModel> {
               hint: 'ex. 0973276418423',
               controller: viewModel.applicantPhoneNumberController,
               validator: viewModel.validateApplicantPhoneNumber,
+              digitsOnly: true,
+              keyboardType: TextInputType.number,
             ),
             verticalSpaceLarge,
 

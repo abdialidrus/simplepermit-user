@@ -8,23 +8,20 @@ class ApplicationModel extends Equatable {
   final ApplicantModel applicant;
   final List<ContractorModel> contractors;
   final LocationModel location;
-  // final CommunityModel community;
-  final String communityRefId;
+  final String community;
 
   const ApplicationModel({
     required this.applicant,
     required this.contractors,
     required this.location,
-    // required this.community,
-    required this.communityRefId,
+    required this.community,
   });
 
   Map<String, dynamic> toJson() => {
         'applicant': applicant.toJson(),
         'contractors': contractors.map((e) => e.toJson()).toList(),
         'location': location.toJson(),
-        // 'community': community.toJson(),
-        'communityRefId': communityRefId,
+        'community': community,
       };
 
   @override
@@ -32,7 +29,6 @@ class ApplicationModel extends Equatable {
         applicant,
         contractors,
         location,
-        // community,
-        communityRefId,
+        community,
       ];
 }

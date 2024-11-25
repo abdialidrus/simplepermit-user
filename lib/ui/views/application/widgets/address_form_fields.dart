@@ -73,6 +73,8 @@ class AddressFormFields extends StatelessWidget {
           hint: 'Zip',
           controller: zipCodeInputController,
           validator: zipCodeValidator,
+          digitsOnly: true,
+          keyboardType: TextInputType.number,
         ),
       ],
     );

@@ -53,7 +53,7 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
                 width: MediaQuery.of(context).size.width * 0.5,
                 child: MainSmallButton(
                   label: 'Add Contractor',
-                  onTap: () => viewModel.showContractorForm(),
+                  onTap: viewModel.showContractorForm,
                   leadingIcon: const Icon(
                     Icons.add,
                     color: Colors.white,
@@ -89,6 +89,7 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
                 hint: 'ex. janedoe@gmail.com',
                 controller: viewModel.contractorEmailController,
                 validator: viewModel.validateContractorEmail,
+                keyboardType: TextInputType.emailAddress,
               ),
               verticalSpaceSmall,
               InputTextField(
@@ -96,6 +97,8 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
                 hint: 'ex. 0973276418423',
                 controller: viewModel.contractorPhoneNumberController,
                 validator: viewModel.validateContractorPhoneNumber,
+                digitsOnly: true,
+                keyboardType: TextInputType.number,
               ),
               verticalSpaceLarge,
 

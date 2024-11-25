@@ -208,6 +208,6 @@ class ApplicationView extends StackedView<ApplicationViewModel> {
   void onViewModelReady(ApplicationViewModel viewModel) {
     super.onViewModelReady(viewModel);
 
-    viewModel.onViewModelReady();
+    viewModel.onViewModelReady(userType);
   }
 }

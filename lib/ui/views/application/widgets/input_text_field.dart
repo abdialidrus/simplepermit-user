@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permit_user_app/ui/common/app_typography.dart';
 
 class InputTextField extends StatelessWidget {
@@ -12,6 +13,8 @@ class InputTextField extends StatelessWidget {
     this.showSuffixArrow = false,
     this.enabled = true,
     this.onTap,
+    this.digitsOnly = false,
+    this.keyboardType = TextInputType.text,
   });
 
   final String? label;
@@ -22,6 +25,8 @@ class InputTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool? enabled;
   final VoidCallback? onTap;
+  final bool? digitsOnly;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +48,10 @@ class InputTextField extends StatelessWidget {
             minLines: maxLines,
             validator: validator,
             enabled: enabled,
+            keyboardType: keyboardType,
+            inputFormatters: [
+              if (digitsOnly!) FilteringTextInputFormatter.digitsOnly,
+            ],
             decoration: InputDecoration(
               hintText: hint ?? label,
               hintStyle:

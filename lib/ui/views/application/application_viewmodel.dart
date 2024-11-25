@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:permit_user_app/app/app.bottomsheets.dart';
 import 'package:permit_user_app/models/community_model.dart';
+import 'package:permit_user_app/ui/views/home/widgets/user_type_menu_item.dart';
 import 'package:stacked/stacked.dart';
 import 'package:permit_user_app/app/app.locator.dart';
 import 'package:permit_user_app/app/app.logger.dart';
@@ -27,6 +29,7 @@ class ApplicationViewModel extends BaseViewModel {
   final log = getLogger('ApplicationViewModel');
   final _applicationService = locator<ApplicationService>();
   final _navigationService = locator<NavigationService>();
+  final _bottomSheetService = locator<BottomSheetService>();
 
   final applicantFormKey = GlobalKey<FormState>();
   final applicantNameController = TextEditingController();
@@ -62,6 +65,8 @@ class ApplicationViewModel extends BaseViewModel {
   final projectDescriptionController = TextEditingController();
   final projectCostOfConstructionController = TextEditingController();
 
+  String? selectedRole;
+
   //
   LocationModel? locationModel;
 
@@ -89,7 +94,9 @@ class ApplicationViewModel extends BaseViewModel {
   bool isShowAcknowledgement = false;
   bool isApplicationSubmitted = false;
 
-  void onViewModelReady() {}
+  void onViewModelReady(UserType userType) {
+    selectedRole = userType.name;
+  }
 
   void showContractorForm() {
     canShowContractorForm = true;
@@ -137,8 +144,8 @@ class ApplicationViewModel extends BaseViewModel {
       state: contractorCountryController.text,
       city: contractorStateController.text,
       country: contractorCityController.text,
-      zip: contractorStreetController.text,
-      street: contractorZipCodeController.text,
+      zip: int.parse(contractorZipCodeController.text),
+      street: contractorStreetController.text,
       licenseDocumentIds: contractorLicenseDocumentIds.toList(),
       licenseDocuments: contractorLicenseDocuments.toList(),
     );
@@ -274,8 +281,8 @@ class ApplicationViewModel extends BaseViewModel {
       state: locationCountryController.text,
       city: locationStateController.text,
       country: locationCityController.text,
-      zip: locationStreetController.text,
-      street: locationZipCodeController.text,
+      zip: int.parse(locationZipCodeController.text),
+      street: locationStreetController.text,
       description: projectDescriptionController.text,
       cost: double.parse(projectCostOfConstructionController.text),
       locationDocumentIds: constructionDocumentIds,
@@ -323,7 +330,7 @@ class ApplicationViewModel extends BaseViewModel {
     contractorStateController.text = contractor.state;
     contractorCityController.text = contractor.city;
     contractorStreetController.text = contractor.street;
-    contractorZipCodeController.text = contractor.zip;
+    contractorZipCodeController.text = contractor.zip.toString();
     contractorLicenseDocumentIds.clear();
     contractorLicenseDocumentIds.addAll(contractor.licenseDocumentIds);
     contractorLicenseDocuments.clear();
@@ -442,23 +449,31 @@ class ApplicationViewModel extends BaseViewModel {
         return;
       }
 
+      if (selectedRole == null) {
+        SmartDialog.showNotify(
+            msg: 'Role not selected', notifyType: NotifyType.alert);
+
+        return;
+      }
+
       final applicant = ApplicantModel(
         name: applicantNameController.text,
         country: applicantCountryController.text,
         state: applicantStateController.text,
         city: applicantCityController.text,
         street: applicantStreetController.text,
-        zip: applicantZipCodeController.text,
+        zip: int.parse(applicantZipCodeController.text),
         email: applicantEmailController.text,
         phoneNumber: applicantPhoneNumberController.text,
         notes: applicantNotesController.text,
+        role: selectedRole!,
       );
 
       final application = ApplicationModel(
         applicant: applicant,
         contractors: contractors,
         location: locationModel!,
-        communityRefId: selectedCommunity!.communityRefId,
+        community: selectedCommunity!.communityRefId,
       );
 
       SmartDialog.showLoading(msg: 'Submitting application');

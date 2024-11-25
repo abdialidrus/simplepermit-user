@@ -10,7 +10,7 @@ class ContractorModel extends Equatable {
   final String state;
   final String city;
   final String country;
-  final String zip;
+  final int zip;
   final String street;
   final List<int> licenseDocumentIds;
   final List<File>? licenseDocuments;
