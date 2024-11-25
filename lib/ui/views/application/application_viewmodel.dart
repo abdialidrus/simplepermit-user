@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:permit_user_app/app/app.bottomsheets.dart';
 import 'package:permit_user_app/models/community_model.dart';
 import 'package:permit_user_app/ui/views/home/widgets/user_type_menu_item.dart';
 import 'package:stacked/stacked.dart';
@@ -29,7 +29,6 @@ class ApplicationViewModel extends BaseViewModel {
   final log = getLogger('ApplicationViewModel');
   final _applicationService = locator<ApplicationService>();
   final _navigationService = locator<NavigationService>();
-  final _bottomSheetService = locator<BottomSheetService>();
 
   final applicantFormKey = GlobalKey<FormState>();
   final applicantNameController = TextEditingController();
@@ -558,6 +557,9 @@ class ApplicationViewModel extends BaseViewModel {
     if (value == null || value.isEmpty) {
       return 'Email is required';
     }
+    if (!EmailValidator.validate(value)) {
+      return 'Invalid email address';
+    }
     return null;
   }
 
@@ -592,6 +594,9 @@ class ApplicationViewModel extends BaseViewModel {
   String? validateContractorEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';
+    }
+    if (!EmailValidator.validate(value)) {
+      return 'Invalid email address';
     }
     return null;
   }
