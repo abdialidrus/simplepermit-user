@@ -23,10 +23,21 @@ class HomeView extends StackedView<HomeViewModel> {
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Image.asset(
-                'assets/images/simplepermit-logo.png',
-                width: 123,
-                height: 39.21,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.asset(
+                    'assets/images/simplepermit-logo.png',
+                    width: 123,
+                    height: 39.21,
+                  ),
+                  TextButton(
+                      onPressed: viewModel.navigateToPrivacyPolicyPage,
+                      child: Text(
+                        'Privacy Policy',
+                        style: ktsSmallBold,
+                      )),
+                ],
               ),
             ),
             verticalSpaceSmall,

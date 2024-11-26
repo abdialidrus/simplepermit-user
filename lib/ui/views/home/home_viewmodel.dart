@@ -10,4 +10,8 @@ class HomeViewModel extends BaseViewModel {
   void navigateToPermitApplicationPage(UserType userType) {
     _navigationService.navigateToApplicationView(userType: userType);
   }
+
+  void navigateToPrivacyPolicyPage() {
+    _navigationService.navigateToPrivacyPolicyView();
+  }
 }

@@ -8,6 +8,7 @@ import 'package:permit_user_app/ui/views/landing/landing_view.dart';
 import 'package:permit_user_app/ui/views/application/application_view.dart';
 import 'package:permit_user_app/services/application_service.dart';
 import 'package:permit_user_app/services/location_service.dart';
+import 'package:permit_user_app/ui/views/privacy_policy/privacy_policy_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -16,6 +17,7 @@ import 'package:permit_user_app/services/location_service.dart';
     MaterialRoute(page: StartupView),
     MaterialRoute(page: LandingView),
     MaterialRoute(page: ApplicationView),
+    MaterialRoute(page: PrivacyPolicyView),
 // @stacked-route
   ],
   dependencies: [

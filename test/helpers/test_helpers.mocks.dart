@@ -838,15 +838,6 @@ class MockLocationService extends _i1.Mock implements _i15.LocationService {
       ) as _i8.Future<_i3.Position>);
 
   @override
-  void requestLocationPermission() => super.noSuchMethod(
-        Invocation.method(
-          #requestLocationPermission,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
   _i8.Future<_i4.Placemark> getAddressFromUserPosition() => (super.noSuchMethod(
         Invocation.method(
           #getAddressFromUserPosition,
