@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 
 class ContractorModel extends Equatable {
@@ -12,8 +10,7 @@ class ContractorModel extends Equatable {
   final String country;
   final int zip;
   final String street;
-  final List<int> licenseDocumentIds;
-  final List<File>? licenseDocuments;
+  final Map<String, int> licenseDocuments;
 
   const ContractorModel({
     required this.individualName,
@@ -25,8 +22,7 @@ class ContractorModel extends Equatable {
     required this.country,
     required this.zip,
     required this.street,
-    required this.licenseDocumentIds,
-    this.licenseDocuments,
+    required this.licenseDocuments,
   });
 
   Map<String, dynamic> toJson() => {
@@ -39,7 +35,8 @@ class ContractorModel extends Equatable {
         'country': country,
         'zip': zip,
         'street': street,
-        'license': licenseDocumentIds,
+        'license':
+            licenseDocuments.entries.map((entry) => entry.value).toList(),
       };
 
   @override
@@ -53,6 +50,6 @@ class ContractorModel extends Equatable {
         country,
         zip,
         street,
-        licenseDocumentIds,
+        licenseDocuments,
       ];
 }

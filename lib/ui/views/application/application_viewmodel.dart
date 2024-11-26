@@ -83,8 +83,8 @@ class ApplicationViewModel extends BaseViewModel {
   int? editingContractorIndex;
   List<File> contractorLicenseDocuments = [];
   List<File> constructionDocuments = [];
-  List<int> contractorLicenseDocumentIds = [];
-  List<int> constructionDocumentIds = [];
+  Map<String, int> contractorLicenseDocumentIds = {};
+  Map<String, int> constructionDocumentIds = {};
   String defaultPermitType = permitTypes[0];
 
   //
@@ -142,9 +142,12 @@ class ApplicationViewModel extends BaseViewModel {
       return;
     }
 
-    final uploadResult = await uploadContractorLicenseDocuments();
+    bool allDocumentsUploaded = true;
+    if (contractorLicenseDocumentIds.isEmpty) {
+      allDocumentsUploaded = await uploadContractorLicenseDocuments();
+    }
 
-    if (uploadResult == false) {
+    if (allDocumentsUploaded == false) {
       SmartDialog.showNotify(
         msg: 'Failed to upload documents. Please try again',
         notifyType: NotifyType.error,
@@ -162,8 +165,7 @@ class ApplicationViewModel extends BaseViewModel {
       country: contractorCityController.text,
       zip: int.parse(contractorZipCodeController.text),
       street: contractorStreetController.text,
-      licenseDocumentIds: contractorLicenseDocumentIds.toList(),
-      licenseDocuments: contractorLicenseDocuments.toList(),
+      licenseDocuments: contractorLicenseDocumentIds,
     );
 
     if (editingContractorIndex != null) {
@@ -259,7 +261,12 @@ class ApplicationViewModel extends BaseViewModel {
         return;
       }
 
-      if (await uploadConstructionDocuments() == false) {
+      bool allDocumentsUploaded = true;
+      if (constructionDocumentIds.isEmpty) {
+        allDocumentsUploaded = await uploadConstructionDocuments();
+      }
+
+      if (allDocumentsUploaded == false) {
         SmartDialog.showNotify(
           msg: 'Failed to upload documents. Please try again',
           notifyType: NotifyType.error,
@@ -301,7 +308,8 @@ class ApplicationViewModel extends BaseViewModel {
       street: locationStreetController.text,
       description: projectDescriptionController.text,
       cost: double.parse(projectCostOfConstructionController.text),
-      locationDocumentIds: constructionDocumentIds,
+      locationDocumentIds:
+          constructionDocumentIds.entries.map((entry) => entry.value).toList(),
       permitType: defaultPermitType,
     );
   }
@@ -348,11 +356,10 @@ class ApplicationViewModel extends BaseViewModel {
     contractorStreetController.text = contractor.street;
     contractorZipCodeController.text = contractor.zip.toString();
     contractorLicenseDocumentIds.clear();
-    contractorLicenseDocumentIds.addAll(contractor.licenseDocumentIds);
+    contractorLicenseDocumentIds.addAll(contractor.licenseDocuments);
     contractorLicenseDocuments.clear();
-    if (contractor.licenseDocuments != null) {
-      contractorLicenseDocuments.addAll(contractor.licenseDocuments!);
-    }
+    contractorLicenseDocuments.addAll(
+        contractor.licenseDocuments.entries.map((entry) => File(entry.key)));
 
     rebuildUi();
   }
@@ -390,7 +397,8 @@ class ApplicationViewModel extends BaseViewModel {
     return null;
   }
 
-  Future<bool> uploadContractorLicenseDocuments() async {
+  Future<bool> uploadContractorLicenseDocuments(
+      {bool rebuildUIImmediately = false}) async {
     if (contractorLicenseDocuments.isEmpty) {
       return false;
     }
@@ -400,12 +408,17 @@ class ApplicationViewModel extends BaseViewModel {
         msg: 'Uploading documents',
       );
 
-      final List<int> documentIds =
-          await _applicationService.uploadDocuments(contractorLicenseDocuments);
+      for (var file in contractorLicenseDocuments) {
+        final List<int> documentIds =
+            await _applicationService.uploadDocuments(file);
+        contractorLicenseDocumentIds[file.path] = documentIds.first;
+      }
 
       SmartDialog.dismiss();
 
-      contractorLicenseDocumentIds.addAll(documentIds);
+      if (rebuildUIImmediately) {
+        rebuildUi();
+      }
 
       return true;
     } catch (e) {
@@ -416,7 +429,8 @@ class ApplicationViewModel extends BaseViewModel {
     }
   }
 
-  Future<bool> uploadConstructionDocuments() async {
+  Future<bool> uploadConstructionDocuments(
+      {bool rebuildUIImmediately = false}) async {
     if (constructionDocuments.isEmpty) {
       return false;
     }
@@ -430,13 +444,19 @@ class ApplicationViewModel extends BaseViewModel {
         msg: 'Uploading documents',
       );
 
-      final List<int> documentIds =
-          await _applicationService.uploadDocuments(constructionDocuments);
+      constructionDocumentIds.clear();
+      for (var file in constructionDocuments) {
+        final List<int> documentIds =
+            await _applicationService.uploadDocuments(file);
+        constructionDocumentIds[file.path] = documentIds.first;
+      }
 
       await SmartDialog.dismiss();
 
-      constructionDocumentIds.clear();
-      constructionDocumentIds.addAll(documentIds);
+      if (rebuildUIImmediately) {
+        rebuildUi();
+      }
+
       return true;
     } catch (e) {
       await SmartDialog.dismiss();
@@ -713,6 +733,20 @@ class ApplicationViewModel extends BaseViewModel {
     if (value == null) return;
 
     defaultPermitType = value;
+    rebuildUi();
+  }
+
+  void removeContractorDocument(String path) {
+    contractorLicenseDocuments.removeWhere((file) => file.path == path);
+    contractorLicenseDocumentIds.remove(path);
+
+    rebuildUi();
+  }
+
+  void removeContructionsDocument(String path) {
+    constructionDocuments.removeWhere((file) => file.path == path);
+    constructionDocumentIds.remove(path);
+
     rebuildUi();
   }
 }

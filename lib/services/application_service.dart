@@ -51,10 +51,6 @@ class ApplicationService {
         'permitType': locationModel.permitType,
       };
 
-      // final data = sampleCommunityResponse['data'] as List;
-      // return data.map((e) => CommunityModel.fromJson(e)).toList();
-
-      // final response = await _dio.get(endpoint, queryParameters: parameters);
       final response = await _dio.post(endpoint, data: payload);
 
       if (response.statusCode == 200) {
@@ -80,7 +76,6 @@ class ApplicationService {
     try {
       final endpoint = '$baseUrl/application';
       final payload = application.toJson();
-      final payloadString = payload.toString();
       final response = await _dio.post(endpoint, data: payload);
 
       if (response.statusCode == 200) {
@@ -96,24 +91,22 @@ class ApplicationService {
     }
   }
 
-  Future<List<int>> uploadDocuments(List<File> files) async {
+  Future<List<int>> uploadDocuments(File file) async {
     try {
       final uploadUrl = '$baseUrl/attachments/upload-files';
 
       // Prepare the form data
       FormData formData = FormData();
-      for (var file in files) {
-        if (file.existsSync()) {
-          formData.files.add(
-            MapEntry(
-              'files', // Replace 'files' with your server's expected key
-              await MultipartFile.fromFile(
-                file.path,
-                filename: file.path.split('/').last, // Extract the filename
-              ),
+      if (file.existsSync()) {
+        formData.files.add(
+          MapEntry(
+            'files', // Replace 'files' with your server's expected key
+            await MultipartFile.fromFile(
+              file.path,
+              filename: file.path.split('/').last, // Extract the filename
             ),
-          );
-        }
+          ),
+        );
       }
 
       // Make the POST request

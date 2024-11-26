@@ -94,6 +94,13 @@ class LocationForm extends ViewModelWidget<ApplicationViewModel> {
               onPickDocuments: viewModel.pickConstructionDocuments,
               documentPaths:
                   viewModel.constructionDocuments.map((e) => e.path).toList(),
+              onUploadButtonTap: () => viewModel.uploadConstructionDocuments(
+                rebuildUIImmediately: true,
+              ),
+              onDocumentDeleteTap: (path) =>
+                  viewModel.removeContructionsDocument(path),
+              areDocumentsUploaded:
+                  viewModel.constructionDocumentIds.isNotEmpty,
             ),
           ],
         ),

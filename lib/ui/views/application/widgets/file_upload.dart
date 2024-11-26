@@ -2,21 +2,28 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:marquee/marquee.dart';
 import 'package:permit_user_app/ui/common/app_colors.dart';
 import 'package:permit_user_app/ui/common/app_typography.dart';
 import 'package:permit_user_app/ui/common/ui_helpers.dart';
 import 'package:permit_user_app/ui/widgets/common/secondary_small_button/secondary_small_button.dart';
+import 'package:permit_user_app/ui/widgets/common/text_with_mid_ellipsis/text_with_mid_ellipsis.dart';
+import 'package:permit_user_app/utils/file.dart';
 
 class FileUpload extends StatelessWidget {
   const FileUpload({
     super.key,
     required this.onPickDocuments,
     required this.documentPaths,
+    required this.onUploadButtonTap,
+    required this.areDocumentsUploaded,
+    required this.onDocumentDeleteTap,
   });
 
   final VoidCallback? onPickDocuments;
   final List<String> documentPaths;
+  final VoidCallback onUploadButtonTap;
+  final bool areDocumentsUploaded;
+  final void Function(String) onDocumentDeleteTap;
 
   @override
   Widget build(BuildContext context) {
@@ -92,21 +99,37 @@ class FileUpload extends StatelessWidget {
                         style: ktsSmallRegular,
                       ),
                     ...documentPaths.map(
-                      (e) => SizedBox(
-                        height: 20,
-                        child: Marquee(
-                          text: e,
-                          style: ktsSmallRegular,
-                        ),
-                      ),
+                      (e) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: TextWithMidEllipsis(
+                                FileUtils.getFileNameFromPath(e),
+                                style: ktsSmallRegular,
+                              ),
+                            ),
+                            horizontalSpaceSmall,
+                            IconButton(
+                              onPressed: () => onDocumentDeleteTap(e),
+                              icon: const Icon(
+                                Icons.delete_outline_rounded,
+                                size: 20,
+                              ),
+                              visualDensity: VisualDensity.compact,
+                            )
+                          ],
+                        );
+                      },
                     ),
+                    if (!areDocumentsUploaded && documentPaths.isNotEmpty) ...[
+                      verticalSpaceMedium,
+                      SecondarySmallButton(
+                        label: 'Upload',
+                        onTap: onUploadButtonTap,
+                      ),
+                    ],
                   ],
                 ),
-              ),
-              horizontalSpaceSmall,
-              SecondarySmallButton(
-                label: 'Upload',
-                onTap: () {},
               ),
             ],
           ),

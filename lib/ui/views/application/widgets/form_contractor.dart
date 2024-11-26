@@ -127,6 +127,14 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
                 documentPaths: viewModel.contractorLicenseDocuments
                     .map((e) => e.path)
                     .toList(),
+                onUploadButtonTap: () =>
+                    viewModel.uploadContractorLicenseDocuments(
+                  rebuildUIImmediately: true,
+                ),
+                onDocumentDeleteTap: (path) =>
+                    viewModel.removeContractorDocument(path),
+                areDocumentsUploaded:
+                    viewModel.contractorLicenseDocumentIds.isNotEmpty,
               ),
             ],
 
