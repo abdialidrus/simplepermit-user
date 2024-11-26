@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:permit_user_app/models/community_model.dart';
+import 'package:permit_user_app/services/location_service.dart';
 import 'package:permit_user_app/ui/views/home/widgets/user_type_menu_item.dart';
 import 'package:stacked/stacked.dart';
 import 'package:permit_user_app/app/app.locator.dart';
@@ -29,6 +30,7 @@ class ApplicationViewModel extends BaseViewModel {
   final log = getLogger('ApplicationViewModel');
   final _applicationService = locator<ApplicationService>();
   final _navigationService = locator<NavigationService>();
+  final _locationService = locator<LocationService>();
 
   final applicantFormKey = GlobalKey<FormState>();
   final applicantNameController = TextEditingController();
@@ -95,6 +97,21 @@ class ApplicationViewModel extends BaseViewModel {
 
   void onViewModelReady(UserType userType) {
     selectedRole = userType.name;
+    getUserCurrentCompleteAddress();
+  }
+
+  void getUserCurrentCompleteAddress() async {
+    try {
+      final placemark = await _locationService.getAddressFromUserPosition();
+      applicantCountryController.text = placemark.country ?? '';
+      applicantStreetController.text = placemark.thoroughfare ?? '';
+      applicantCityController.text = placemark.locality ?? '';
+      applicantStateController.text = placemark.administrativeArea ?? '';
+      applicantZipCodeController.text = placemark.postalCode ?? '';
+      rebuildUi();
+    } catch (e) {
+      log.e(e);
+    }
   }
 
   void showContractorForm() {

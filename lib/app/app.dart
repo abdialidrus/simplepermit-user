@@ -7,6 +7,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:permit_user_app/ui/views/landing/landing_view.dart';
 import 'package:permit_user_app/ui/views/application/application_view.dart';
 import 'package:permit_user_app/services/application_service.dart';
+import 'package:permit_user_app/services/location_service.dart';
 // @stacked-import
 
 @StackedApp(
@@ -22,6 +23,7 @@ import 'package:permit_user_app/services/application_service.dart';
     LazySingleton(classType: DialogService),
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: ApplicationService),
+    LazySingleton(classType: LocationService),
 // @stacked-service
   ],
   bottomsheets: [

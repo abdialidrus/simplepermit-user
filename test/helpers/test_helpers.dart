@@ -3,6 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:permit_user_app/app/app.locator.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:permit_user_app/services/application_service.dart';
+import 'package:permit_user_app/services/location_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -12,6 +13,7 @@ import 'test_helpers.mocks.dart';
   MockSpec<BottomSheetService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<DialogService>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<ApplicationService>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<LocationService>(onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
 ])
 void registerServices() {
@@ -19,6 +21,7 @@ void registerServices() {
   getAndRegisterBottomSheetService();
   getAndRegisterDialogService();
   getAndRegisterApplicationService();
+  getAndRegisterLocationService();
 // @stacked-mock-register
 }
 
@@ -76,6 +79,13 @@ MockApplicationService getAndRegisterApplicationService() {
   _removeRegistrationIfExists<ApplicationService>();
   final service = MockApplicationService();
   locator.registerSingleton<ApplicationService>(service);
+  return service;
+}
+
+MockLocationService getAndRegisterLocationService() {
+  _removeRegistrationIfExists<LocationService>();
+  final service = MockLocationService();
+  locator.registerSingleton<LocationService>(service);
   return service;
 }
 // @stacked-mock-create
