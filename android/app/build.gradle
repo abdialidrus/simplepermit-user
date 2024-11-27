@@ -5,6 +5,25 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
 android {
     namespace = "com.example.permit_user_app"
     compileSdk = flutter.compileSdkVersion
@@ -28,6 +47,15 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['ALIAS_NAME']
+            keyPassword keystoreProperties['KEY_PASSWORD']
+            storeFile keystoreProperties['KEYSTORE_PATH'] ? file(keystoreProperties['KEYSTORE_PATH']) : null
+            storePassword keystoreProperties['KEYSTORE_PASSWORD']
+        }
     }
 
     buildTypes {
