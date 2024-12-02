@@ -49,6 +49,7 @@ class ApplicationService {
         'country': locationModel.country,
         'street': locationModel.street,
         'permitType': locationModel.permitType,
+        'zip': locationModel.zip,
       };
 
       final response = await _dio.post(endpoint, data: payload);
