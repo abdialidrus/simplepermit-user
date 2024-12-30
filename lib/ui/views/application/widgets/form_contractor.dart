@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:permit_user_app/ui/common/app_colors.dart';
 import 'package:stacked/stacked.dart';
 import 'package:permit_user_app/ui/common/app_typography.dart';
 import 'package:permit_user_app/ui/common/ui_helpers.dart';
@@ -37,13 +38,58 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
               if (viewModel.contractors.isNotEmpty) ...[
                 verticalSpaceSmall,
                 for (var contractor in viewModel.contractors) ...[
-                  InputTextField(
-                    controller: TextEditingController(),
-                    validator: (p0) => null,
-                    hint: contractor.individualName,
-                    showSuffixArrow: true,
-                    enabled: false,
-                    onTap: () => viewModel.startEditingContractor(contractor),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InputTextField(
+                          controller: TextEditingController(),
+                          validator: (p0) => null,
+                          hint: contractor.individualName,
+                          showSuffixArrow: true,
+                          enabled: false,
+                          onTap: () =>
+                              viewModel.startEditingContractor(contractor),
+                        ),
+                      ),
+                      horizontalSpaceSmall,
+                      InkWell(
+                        onTap: () => viewModel.removeContractor(contractor),
+                        child: const Icon(
+                          Icons.delete_outline_rounded,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (viewModel
+                          .areContractorAttachmentsUploading(contractor)) ...[
+                        const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(),
+                        ),
+                        horizontalSpaceExtraSmall,
+                      ],
+                      if (viewModel
+                          .areContractorAttachmentsUploaded(contractor)) ...[
+                        const Icon(
+                          Icons.check_circle_rounded,
+                          color: Colors.green,
+                          size: 15,
+                        ),
+                        horizontalSpaceExtraSmall,
+                      ],
+                      Text(
+                        '${viewModel.getUploadedContractorDocumentsCount(contractor)}/${contractor.licenseDocuments.length} Documents uploaded',
+                        style: ktsLabelRegular.copyWith(
+                          color: kcMediumGrey,
+                        ),
+                      ),
+                    ],
                   ),
                   verticalSpaceSmall,
                 ],
@@ -125,17 +171,16 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
               verticalSpaceSmall,
               FileUpload(
                 onPickDocuments: viewModel.pickContractorLicenseDocuments,
-                documentPaths: viewModel.contractorLicenseDocuments
-                    .map((e) => e.path)
-                    .toList(),
+                attachments: viewModel.contractorLicenseAttachments,
+                onUploadAttachment: viewModel.uploadContractorAttachment,
                 onUploadButtonTap: () =>
                     viewModel.uploadContractorLicenseDocuments(
                   rebuildUIImmediately: true,
                 ),
-                onDocumentDeleteTap: (path) =>
-                    viewModel.removeContractorDocument(path),
+                onDocumentDeleteTap: (attachment) =>
+                    viewModel.removeContractorDocument(attachment.file.path),
                 areDocumentsUploaded:
-                    viewModel.contractorLicenseDocumentIds.isNotEmpty,
+                    viewModel.areAllContractorAttachmentsUploaded(),
               ),
             ],
 

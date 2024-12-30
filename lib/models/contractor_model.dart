@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:permit_user_app/models/attachment_model.dart';
 
 class ContractorModel extends Equatable {
   final String individualName;
@@ -10,7 +11,7 @@ class ContractorModel extends Equatable {
   final String country;
   final int zip;
   final String street;
-  final Map<String, int> licenseDocuments;
+  final List<AttachmentModel> licenseDocuments;
 
   const ContractorModel({
     required this.individualName,
@@ -35,8 +36,7 @@ class ContractorModel extends Equatable {
         'country': country,
         'zip': zip,
         'street': street,
-        'license':
-            licenseDocuments.entries.map((entry) => entry.value).toList(),
+        'license': licenseDocuments.map((e) => e.id!).toList(),
       };
 
   @override

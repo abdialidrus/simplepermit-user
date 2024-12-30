@@ -5,9 +5,11 @@ import 'package:email_validator/email_validator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:permit_user_app/models/attachment_model.dart';
 import 'package:permit_user_app/models/community_model.dart';
 import 'package:permit_user_app/services/location_service.dart';
 import 'package:permit_user_app/ui/views/home/widgets/user_type_menu_item.dart';
+import 'package:permit_user_app/utils/dialog.dart';
 import 'package:stacked/stacked.dart';
 import 'package:permit_user_app/app/app.locator.dart';
 import 'package:permit_user_app/app/app.logger.dart';
@@ -30,6 +32,7 @@ extension ApplicationStatusX on ApplicationStatus {
 class ApplicationViewModel extends BaseViewModel {
   final log = getLogger('ApplicationViewModel');
   final _applicationService = locator<ApplicationService>();
+  final _dialogService = locator<DialogService>();
   final _navigationService = locator<NavigationService>();
   final _locationService = locator<LocationService>();
 
@@ -87,9 +90,9 @@ class ApplicationViewModel extends BaseViewModel {
   bool canShowContractorForm = false;
   bool isEditingContractor = false;
   int? editingContractorIndex;
-  List<File> contractorLicenseDocuments = [];
+  List<AttachmentModel> contractorLicenseAttachments = [];
+
   List<File> constructionDocuments = [];
-  Map<String, int> contractorLicenseDocumentIds = {};
   Map<String, int> constructionDocumentIds = {};
   String defaultPermitType = permitTypes[0];
 
@@ -100,6 +103,8 @@ class ApplicationViewModel extends BaseViewModel {
   //
   bool isShowAcknowledgement = false;
   bool isApplicationSubmitted = false;
+
+  final errorToastsController = SmartDialogController();
 
   void onViewModelReady(UserType userType) {
     selectedRole = userType.name;
@@ -168,24 +173,10 @@ class ApplicationViewModel extends BaseViewModel {
   void addContractor() async {
     if (!isContractorFormValid()) return;
 
-    if (contractorLicenseDocuments.isEmpty) {
-      SmartDialog.showNotify(
-        msg: 'Please upload at least one contractor license document',
-        notifyType: NotifyType.alert,
-      );
-      return;
-    }
+    if (contractorLicenseAttachments.isEmpty) {
+      DialogUtils.showBottomToast(
+          'Please upload at least one contractor license document');
 
-    bool allDocumentsUploaded = true;
-    if (contractorLicenseDocumentIds.isEmpty) {
-      allDocumentsUploaded = await uploadContractorLicenseDocuments();
-    }
-
-    if (allDocumentsUploaded == false) {
-      SmartDialog.showNotify(
-        msg: 'Failed to upload documents. Please try again',
-        notifyType: NotifyType.error,
-      );
       return;
     }
 
@@ -199,7 +190,7 @@ class ApplicationViewModel extends BaseViewModel {
       country: contractorCityController.text,
       zip: int.parse(contractorZipCodeController.text),
       street: contractorStreetController.text,
-      licenseDocuments: contractorLicenseDocumentIds,
+      licenseDocuments: List.from(contractorLicenseAttachments),
     );
 
     if (editingContractorIndex != null) {
@@ -212,6 +203,7 @@ class ApplicationViewModel extends BaseViewModel {
   }
 
   void resetContractorForm() {
+    contractorFormKey.currentState?.reset();
     contractorCompanyOrIndividualNameController.text = '';
     contractorApplicableTradesController.text = '';
     contractorEmailController.text = '';
@@ -221,8 +213,7 @@ class ApplicationViewModel extends BaseViewModel {
     contractorCityController.text = '';
     contractorStreetController.text = '';
     contractorZipCodeController.text = '';
-    contractorLicenseDocumentIds.clear();
-    contractorLicenseDocuments.clear();
+    contractorLicenseAttachments.clear();
   }
 
   bool canPopBack() {
@@ -273,13 +264,15 @@ class ApplicationViewModel extends BaseViewModel {
 
     if (activeStep == 2) {
       if (contractors.isEmpty) {
-        SmartDialog.showNotify(
-          msg: 'Please add at least one contractor',
-          notifyType: NotifyType.alert,
-        );
+        DialogUtils.showBottomToast('Please add at least one contractor');
         return;
       }
-      // await uploadContractorLicenseDocuments();
+      final res = await uploadAllContractorAttachments();
+      if (!res) {
+        DialogUtils.showBottomToast(
+            'Failed to upload documents. Please try again');
+        return;
+      }
     }
 
     if (activeStep == 3) {
@@ -288,10 +281,8 @@ class ApplicationViewModel extends BaseViewModel {
       }
 
       if (constructionDocuments.isEmpty) {
-        SmartDialog.showNotify(
-          msg: 'Please upload at least one construction documents',
-          notifyType: NotifyType.alert,
-        );
+        DialogUtils.showBottomToast(
+            'Please upload at least one construction documents');
         return;
       }
 
@@ -316,10 +307,7 @@ class ApplicationViewModel extends BaseViewModel {
 
     if (activeStep == 4) {
       if (selectedCommunity == null) {
-        SmartDialog.showNotify(
-          msg: 'Please select a community',
-          notifyType: NotifyType.alert,
-        );
+        DialogUtils.showBottomToast('Please select a community');
         return;
       }
     }
@@ -389,11 +377,8 @@ class ApplicationViewModel extends BaseViewModel {
     contractorCityController.text = contractor.city;
     contractorStreetController.text = contractor.street;
     contractorZipCodeController.text = contractor.zip.toString();
-    contractorLicenseDocumentIds.clear();
-    contractorLicenseDocumentIds.addAll(contractor.licenseDocuments);
-    contractorLicenseDocuments.clear();
-    contractorLicenseDocuments.addAll(
-        contractor.licenseDocuments.entries.map((entry) => File(entry.key)));
+    contractorLicenseAttachments.clear();
+    contractorLicenseAttachments.addAll(contractor.licenseDocuments);
 
     rebuildUi();
   }
@@ -402,9 +387,9 @@ class ApplicationViewModel extends BaseViewModel {
     final List<File>? result = await _pickDocuments();
 
     if (result != null) {
-      contractorLicenseDocumentIds.clear();
-      contractorLicenseDocuments.clear();
-      contractorLicenseDocuments.addAll(result);
+      contractorLicenseAttachments.clear();
+      contractorLicenseAttachments
+          .addAll(result.map((e) => AttachmentModel(file: e)));
       rebuildUi();
     }
   }
@@ -431,9 +416,32 @@ class ApplicationViewModel extends BaseViewModel {
     return null;
   }
 
+  Future<void> uploadContractorAttachment(AttachmentModel attachment) async {
+    try {
+      attachment.isUploading = true;
+      rebuildUi();
+
+      final List<int> documentIds =
+          await _applicationService.uploadDocuments(attachment.file);
+      attachment.id = documentIds.first;
+      attachment.isUploading = false;
+      attachment.isUploaded = true;
+      attachment.isUploadFailed = false;
+      rebuildUi();
+    } catch (e) {
+      attachment.isUploading = false;
+      attachment.isUploaded = false;
+      attachment.isUploadFailed = true;
+      rebuildUi();
+      DialogUtils.showBottomToast('Failed to upload document');
+
+      rethrow;
+    }
+  }
+
   Future<bool> uploadContractorLicenseDocuments(
       {bool rebuildUIImmediately = false}) async {
-    if (contractorLicenseDocuments.isEmpty) {
+    if (contractorLicenseAttachments.isEmpty) {
       return false;
     }
 
@@ -442,10 +450,10 @@ class ApplicationViewModel extends BaseViewModel {
         msg: 'Uploading documents',
       );
 
-      for (var file in contractorLicenseDocuments) {
-        final List<int> documentIds =
-            await _applicationService.uploadDocuments(file);
-        contractorLicenseDocumentIds[file.path] = documentIds.first;
+      for (var attachment in contractorLicenseAttachments) {
+        if (attachment.id == null) {
+          await uploadContractorAttachment(attachment);
+        }
       }
 
       SmartDialog.dismiss();
@@ -513,15 +521,13 @@ class ApplicationViewModel extends BaseViewModel {
   Future<void> submitApplication() async {
     try {
       if (locationModel == null) {
-        SmartDialog.showNotify(
-            msg: 'Location data not valid', notifyType: NotifyType.alert);
+        DialogUtils.showBottomToast('Location data not valid');
 
         return;
       }
 
       if (selectedRole == null) {
-        SmartDialog.showNotify(
-            msg: 'Role not selected', notifyType: NotifyType.alert);
+        DialogUtils.showBottomToast('Role not selected');
 
         return;
       }
@@ -582,11 +588,18 @@ class ApplicationViewModel extends BaseViewModel {
     return locationFormKey.currentState!.validate();
   }
 
-  String? validateApplicantName(String? value) {
+  String? validateApplicantFirstName(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Name is required';
+      return 'First name is required';
     }
 
+    return null;
+  }
+
+  String? validateApplicantLastName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Last name is required';
+    }
     return null;
   }
 
@@ -651,6 +664,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateContractorCompanyOrIndividualName(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Company or Individual Name is required');
       return 'Company or Individual Name is required';
     }
     return null;
@@ -658,6 +672,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateContractorApplicableTrades(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Applicable Trades is required');
       return 'Applicable Trades is required';
     }
     return null;
@@ -675,6 +690,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateContractorPhoneNumber(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Phone Number is required');
       return 'Phone Number is required';
     }
     return null;
@@ -682,6 +698,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateContractorCountry(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Country is required');
       return 'Country is required';
     }
     return null;
@@ -689,6 +706,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateContractorState(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('State is required');
       return 'State is required';
     }
     return null;
@@ -696,6 +714,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateContractorCity(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('City is required');
       return 'City is required';
     }
     return null;
@@ -703,6 +722,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateContractorStreet(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Street is required');
       return 'Street is required';
     }
     return null;
@@ -710,6 +730,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateContractorZipCode(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Zip Code is required');
       return 'Zip Code is required';
     }
     return null;
@@ -772,8 +793,7 @@ class ApplicationViewModel extends BaseViewModel {
   }
 
   void removeContractorDocument(String path) {
-    contractorLicenseDocuments.removeWhere((file) => file.path == path);
-    contractorLicenseDocumentIds.remove(path);
+    contractorLicenseAttachments.removeWhere((e) => e.file.path == path);
 
     rebuildUi();
   }
@@ -783,5 +803,58 @@ class ApplicationViewModel extends BaseViewModel {
     constructionDocumentIds.remove(path);
 
     rebuildUi();
+  }
+
+  bool areAllContractorAttachmentsUploaded() {
+    return contractorLicenseAttachments.every((e) => e.isUploaded);
+  }
+
+  bool isAnyContractorAttachmentUploading() {
+    return contractorLicenseAttachments.any((e) => e.isUploading);
+  }
+
+  Future<bool> uploadAllContractorAttachments() async {
+    try {
+      SmartDialog.showLoading(msg: 'Uploading contractors documents');
+      for (var contractor in contractors) {
+        for (var attachment in contractor.licenseDocuments) {
+          if (attachment.id == null) {
+            await uploadContractorAttachment(attachment);
+          }
+        }
+      }
+    } catch (e) {
+      log.e(e);
+    }
+
+    SmartDialog.dismiss();
+    return contractors
+        .every((contractor) => areContractorAttachmentsUploaded(contractor));
+  }
+
+  int getUploadedContractorDocumentsCount(ContractorModel contractor) {
+    return contractor.licenseDocuments.where((doc) => doc.id != null).length;
+  }
+
+  bool areContractorAttachmentsUploaded(ContractorModel contractor) {
+    return contractor.licenseDocuments.every((doc) => doc.isUploaded);
+  }
+
+  bool areContractorAttachmentsUploading(ContractorModel contractor) {
+    return contractor.licenseDocuments.any((doc) => doc.isUploading);
+  }
+
+  void removeContractor(ContractorModel contractor) async {
+    final res = await _dialogService.showConfirmationDialog(
+      title: 'Remove Contractor',
+      description: 'Are you sure you want to remove this contractor?',
+    );
+
+    if (res != null && res.confirmed) {
+      contractors.remove(contractor);
+      rebuildUi();
+
+      DialogUtils.showBottomToast('Contractor removed');
+    }
   }
 }

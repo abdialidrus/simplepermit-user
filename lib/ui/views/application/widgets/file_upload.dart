@@ -2,10 +2,10 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permit_user_app/models/attachment_model.dart';
 import 'package:permit_user_app/ui/common/app_colors.dart';
 import 'package:permit_user_app/ui/common/app_typography.dart';
 import 'package:permit_user_app/ui/common/ui_helpers.dart';
-import 'package:permit_user_app/ui/widgets/common/secondary_small_button/secondary_small_button.dart';
 import 'package:permit_user_app/ui/widgets/common/text_with_mid_ellipsis/text_with_mid_ellipsis.dart';
 import 'package:permit_user_app/utils/file.dart';
 
@@ -13,17 +13,19 @@ class FileUpload extends StatelessWidget {
   const FileUpload({
     super.key,
     required this.onPickDocuments,
-    required this.documentPaths,
+    required this.attachments,
     required this.onUploadButtonTap,
     required this.areDocumentsUploaded,
     required this.onDocumentDeleteTap,
+    required this.onUploadAttachment,
   });
 
   final VoidCallback? onPickDocuments;
-  final List<String> documentPaths;
+  final List<AttachmentModel> attachments;
   final VoidCallback onUploadButtonTap;
   final bool areDocumentsUploaded;
-  final void Function(String) onDocumentDeleteTap;
+  final void Function(AttachmentModel) onDocumentDeleteTap;
+  final void Function(AttachmentModel) onUploadAttachment;
 
   @override
   Widget build(BuildContext context) {
@@ -93,40 +95,81 @@ class FileUpload extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (documentPaths.isEmpty)
+                    if (attachments.isEmpty)
                       Text(
                         'No files selected',
                         style: ktsSmallRegular,
                       ),
-                    ...documentPaths.map(
+                    ...attachments.map(
                       (e) {
                         return Row(
                           children: [
                             Expanded(
                               child: TextWithMidEllipsis(
-                                FileUtils.getFileNameFromPath(e),
+                                FileUtils.getFileNameFromPath(e.file.path),
                                 style: ktsSmallRegular,
                               ),
                             ),
                             horizontalSpaceSmall,
-                            IconButton(
-                              onPressed: () => onDocumentDeleteTap(e),
-                              icon: const Icon(
-                                Icons.delete_outline_rounded,
-                                size: 20,
-                              ),
-                              visualDensity: VisualDensity.compact,
-                            )
+                            if (e.isUploading)
+                              const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(),
+                              )
+                            else
+                              Row(
+                                children: [
+                                  if (e.isUploaded && !areDocumentsUploaded)
+                                    const Icon(Icons.check_circle_rounded),
+                                  // if (!e.isUploaded)
+                                  //   IconButton(
+                                  //     onPressed: () => onUploadAttachment(e),
+                                  //     icon: const Icon(
+                                  //       Icons.file_upload_rounded,
+                                  //       size: 20,
+                                  //     ),
+                                  //     visualDensity: VisualDensity.compact,
+                                  //   ),
+                                  IconButton(
+                                    onPressed: () => onDocumentDeleteTap(e),
+                                    icon: const Icon(
+                                      Icons.delete_outline_rounded,
+                                      size: 20,
+                                    ),
+                                    visualDensity: VisualDensity.compact,
+                                  )
+                                ],
+                              )
                           ],
                         );
                       },
                     ),
-                    if (!areDocumentsUploaded && documentPaths.isNotEmpty) ...[
+                    if (attachments.isNotEmpty && areDocumentsUploaded) ...[
                       verticalSpaceMedium,
-                      SecondarySmallButton(
-                        label: 'Upload',
-                        onTap: onUploadButtonTap,
-                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Spacer(),
+                          Text(
+                            'All documents uploaded',
+                            style: ktsSmallRegular,
+                          ),
+                          const SizedBox(width: 10),
+                          const Icon(
+                            Icons.check_circle_rounded,
+                            color: Colors.green,
+                          ),
+                          const Spacer()
+                        ],
+                      )
+                      // else
+                      //   SecondarySmallButton(
+                      //     label: 'Upload all documents',
+                      //     onTap: onUploadButtonTap,
+                      //     enabled: !isAnyUploading && !areDocumentsUploaded,
+                      //   ),
                     ],
                   ],
                 ),
