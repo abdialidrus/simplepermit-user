@@ -92,8 +92,7 @@ class ApplicationViewModel extends BaseViewModel {
   int? editingContractorIndex;
   List<AttachmentModel> contractorLicenseAttachments = [];
 
-  List<File> constructionDocuments = [];
-  Map<String, int> constructionDocumentIds = {};
+  List<AttachmentModel> constructionAttachments = [];
   String defaultPermitType = permitTypes[0];
 
   //
@@ -280,22 +279,15 @@ class ApplicationViewModel extends BaseViewModel {
         return;
       }
 
-      if (constructionDocuments.isEmpty) {
+      if (constructionAttachments.isEmpty) {
         DialogUtils.showBottomToast(
             'Please upload at least one construction documents');
         return;
       }
-
-      bool allDocumentsUploaded = true;
-      if (constructionDocumentIds.isEmpty) {
-        allDocumentsUploaded = await uploadConstructionDocuments();
-      }
-
-      if (allDocumentsUploaded == false) {
-        SmartDialog.showNotify(
-          msg: 'Failed to upload documents. Please try again',
-          notifyType: NotifyType.error,
-        );
+      final res = await uploadConstructionDocuments();
+      if (!res) {
+        DialogUtils.showBottomToast(
+            'Failed to upload documents. Please try again');
         return;
       }
 
@@ -330,8 +322,7 @@ class ApplicationViewModel extends BaseViewModel {
       street: locationStreetController.text,
       description: projectDescriptionController.text,
       cost: double.parse(projectCostOfConstructionController.text),
-      locationDocumentIds:
-          constructionDocumentIds.entries.map((entry) => entry.value).toList(),
+      locationAttachments: List.from(constructionAttachments),
       permitType: defaultPermitType,
     );
   }
@@ -398,9 +389,9 @@ class ApplicationViewModel extends BaseViewModel {
     final List<File>? result = await _pickDocuments();
 
     if (result != null) {
-      constructionDocumentIds.clear();
-      constructionDocuments.clear();
-      constructionDocuments.addAll(result);
+      constructionAttachments.clear();
+      constructionAttachments
+          .addAll(result.map((e) => AttachmentModel(file: e)));
       rebuildUi();
     }
   }
@@ -416,7 +407,7 @@ class ApplicationViewModel extends BaseViewModel {
     return null;
   }
 
-  Future<void> uploadContractorAttachment(AttachmentModel attachment) async {
+  Future<void> uploadAttachment(AttachmentModel attachment) async {
     try {
       attachment.isUploading = true;
       rebuildUi();
@@ -425,12 +416,10 @@ class ApplicationViewModel extends BaseViewModel {
           await _applicationService.uploadDocuments(attachment.file);
       attachment.id = documentIds.first;
       attachment.isUploading = false;
-      attachment.isUploaded = true;
       attachment.isUploadFailed = false;
       rebuildUi();
     } catch (e) {
       attachment.isUploading = false;
-      attachment.isUploaded = false;
       attachment.isUploadFailed = true;
       rebuildUi();
       DialogUtils.showBottomToast('Failed to upload document');
@@ -452,7 +441,7 @@ class ApplicationViewModel extends BaseViewModel {
 
       for (var attachment in contractorLicenseAttachments) {
         if (attachment.id == null) {
-          await uploadContractorAttachment(attachment);
+          await uploadAttachment(attachment);
         }
       }
 
@@ -473,11 +462,11 @@ class ApplicationViewModel extends BaseViewModel {
 
   Future<bool> uploadConstructionDocuments(
       {bool rebuildUIImmediately = false}) async {
-    if (constructionDocuments.isEmpty) {
+    if (constructionAttachments.isEmpty) {
       return false;
     }
 
-    if (constructionDocumentIds.isNotEmpty) {
+    if (constructionAttachments.every((e) => e.isUploaded)) {
       return true;
     }
 
@@ -486,11 +475,10 @@ class ApplicationViewModel extends BaseViewModel {
         msg: 'Uploading documents',
       );
 
-      constructionDocumentIds.clear();
-      for (var file in constructionDocuments) {
-        final List<int> documentIds =
-            await _applicationService.uploadDocuments(file);
-        constructionDocumentIds[file.path] = documentIds.first;
+      for (var attachment in constructionAttachments) {
+        if (attachment.id == null) {
+          await uploadAttachment(attachment);
+        }
       }
 
       await SmartDialog.dismiss();
@@ -498,14 +486,13 @@ class ApplicationViewModel extends BaseViewModel {
       if (rebuildUIImmediately) {
         rebuildUi();
       }
-
-      return true;
     } catch (e) {
       await SmartDialog.dismiss();
       log.e(e);
-
-      return false;
     }
+
+    return constructionAttachments
+        .every((construction) => construction.isUploaded);
   }
 
   void showAcknowledgement() {
@@ -738,6 +725,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateLocationCountry(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Country is required');
       return 'Country is required';
     }
     return null;
@@ -745,6 +733,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateLocationState(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('State is required');
       return 'State is required';
     }
     return null;
@@ -752,6 +741,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateLocationCity(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('City is required');
       return 'City is required';
     }
     return null;
@@ -759,6 +749,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateLocationStreet(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Street is required');
       return 'Street is required';
     }
     return null;
@@ -766,6 +757,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateLocationZipCode(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Zip Code is required');
       return 'Zip Code is required';
     }
     return null;
@@ -773,6 +765,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateProjectDescription(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Description is required');
       return 'Description is required';
     }
     return null;
@@ -780,6 +773,7 @@ class ApplicationViewModel extends BaseViewModel {
 
   String? validateProjectCostOfConstruction(String? value) {
     if (value == null || value.isEmpty) {
+      DialogUtils.showBottomToast('Cost of Construction is required');
       return 'Cost of Construction is required';
     }
     return null;
@@ -799,10 +793,13 @@ class ApplicationViewModel extends BaseViewModel {
   }
 
   void removeContructionsDocument(String path) {
-    constructionDocuments.removeWhere((file) => file.path == path);
-    constructionDocumentIds.remove(path);
+    constructionAttachments.removeWhere((e) => e.file.path == path);
 
     rebuildUi();
+  }
+
+  bool areAllConstructionAttachmentsUploaded() {
+    return constructionAttachments.every((e) => e.isUploaded);
   }
 
   bool areAllContractorAttachmentsUploaded() {
@@ -819,7 +816,7 @@ class ApplicationViewModel extends BaseViewModel {
       for (var contractor in contractors) {
         for (var attachment in contractor.licenseDocuments) {
           if (attachment.id == null) {
-            await uploadContractorAttachment(attachment);
+            await uploadAttachment(attachment);
           }
         }
       }

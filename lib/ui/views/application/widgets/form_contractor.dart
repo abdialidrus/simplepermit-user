@@ -172,7 +172,7 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
               FileUpload(
                 onPickDocuments: viewModel.pickContractorLicenseDocuments,
                 attachments: viewModel.contractorLicenseAttachments,
-                onUploadAttachment: viewModel.uploadContractorAttachment,
+                onUploadAttachment: viewModel.uploadAttachment,
                 onUploadButtonTap: () =>
                     viewModel.uploadContractorLicenseDocuments(
                   rebuildUIImmediately: true,

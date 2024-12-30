@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:permit_user_app/models/attachment_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:permit_user_app/ui/common/app_typography.dart';
 import 'package:permit_user_app/ui/common/ui_helpers.dart';
@@ -92,15 +93,15 @@ class LocationForm extends ViewModelWidget<ApplicationViewModel> {
             verticalSpaceSmall,
             FileUpload(
               onPickDocuments: viewModel.pickConstructionDocuments,
-              documentPaths:
-                  viewModel.constructionDocuments.map((e) => e.path).toList(),
+              attachments: viewModel.constructionAttachments,
+              onUploadAttachment: viewModel.uploadAttachment,
               onUploadButtonTap: () => viewModel.uploadConstructionDocuments(
                 rebuildUIImmediately: true,
               ),
-              onDocumentDeleteTap: (path) =>
-                  viewModel.removeContructionsDocument(path),
+              onDocumentDeleteTap: (attachment) =>
+                  viewModel.removeContructionsDocument(attachment.file.path),
               areDocumentsUploaded:
-                  viewModel.constructionDocumentIds.isNotEmpty,
+                  viewModel.areAllConstructionAttachmentsUploaded(),
             ),
           ],
         ),

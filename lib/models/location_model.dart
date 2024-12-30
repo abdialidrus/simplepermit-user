@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:permit_user_app/models/attachment_model.dart';
 
 class LocationModel extends Equatable {
   final String state;
@@ -9,7 +10,7 @@ class LocationModel extends Equatable {
   final String description;
   final double cost;
   final String permitType;
-  final List<int> locationDocumentIds;
+  final List<AttachmentModel> locationAttachments;
 
   const LocationModel({
     required this.state,
@@ -20,7 +21,7 @@ class LocationModel extends Equatable {
     required this.description,
     required this.cost,
     required this.permitType,
-    required this.locationDocumentIds,
+    required this.locationAttachments,
   });
 
   Map<String, dynamic> toJson() => {
@@ -32,7 +33,7 @@ class LocationModel extends Equatable {
         'description': description,
         'cost': cost,
         'permitType': permitType,
-        'locationFiles': locationDocumentIds,
+        'locationFiles': locationAttachments.map((e) => e.id!).toList(),
       };
 
   @override
@@ -45,6 +46,6 @@ class LocationModel extends Equatable {
         description,
         cost,
         permitType,
-        locationDocumentIds,
+        locationAttachments,
       ];
 }
