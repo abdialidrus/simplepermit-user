@@ -24,14 +24,14 @@ class ApplicantForm extends ViewModelWidget<ApplicationViewModel> {
               label: 'First Name',
               hint: 'Ex. Jane',
               controller: viewModel.applicantFirstNameController,
-              validator: viewModel.validateApplicantName,
+              validator: viewModel.validateApplicantFirstName,
             ),
             verticalSpaceSmall,
             InputTextField(
               label: 'Last Name',
               hint: 'Ex. Doe',
               controller: viewModel.applicantLastNameController,
-              validator: viewModel.validateApplicantName,
+              validator: viewModel.validateApplicantLastName,
             ),
 
             verticalSpaceLarge,
