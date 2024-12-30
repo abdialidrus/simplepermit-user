@@ -90,6 +90,7 @@ class ContractorForm extends ViewModelWidget<ApplicationViewModel> {
                 controller: viewModel.contractorEmailController,
                 validator: viewModel.validateContractorEmail,
                 keyboardType: TextInputType.emailAddress,
+                errorText: viewModel.contractorEmailErrorText,
               ),
               verticalSpaceSmall,
               InputTextField(

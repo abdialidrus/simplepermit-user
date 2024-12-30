@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:email_validator/email_validator.dart';
@@ -33,7 +34,8 @@ class ApplicationViewModel extends BaseViewModel {
   final _locationService = locator<LocationService>();
 
   final applicantFormKey = GlobalKey<FormState>();
-  final applicantNameController = TextEditingController();
+  final applicantFirstNameController = TextEditingController();
+  final applicantLastNameController = TextEditingController();
   final applicantCountryController = TextEditingController();
   final applicantStateController = TextEditingController();
   final applicantCityController = TextEditingController();
@@ -65,6 +67,10 @@ class ApplicationViewModel extends BaseViewModel {
   //
   final projectDescriptionController = TextEditingController();
   final projectCostOfConstructionController = TextEditingController();
+
+  Timer? _debounce;
+  String? applicantEmailErrorText;
+  String? contractorEmailErrorText;
 
   String? selectedRole;
 
@@ -98,6 +104,34 @@ class ApplicationViewModel extends BaseViewModel {
   void onViewModelReady(UserType userType) {
     selectedRole = userType.name;
     getUserCurrentCompleteAddress();
+    listenToEmailFieldsTextChanges();
+  }
+
+  void listenToEmailFieldsTextChanges() {
+    applicantEmailController.addListener(() {
+      if (_debounce?.isActive ?? false) _debounce?.cancel();
+      _debounce = Timer(const Duration(milliseconds: 500), () {
+        bool isUpdated = false;
+        final error = validateApplicantEmail(applicantEmailController.text);
+        if (error != applicantEmailErrorText) {
+          isUpdated = true;
+        }
+        applicantEmailErrorText = error;
+        if (isUpdated) rebuildUi();
+      });
+    });
+    contractorEmailController.addListener(() {
+      if (_debounce?.isActive ?? false) _debounce?.cancel();
+      _debounce = Timer(const Duration(milliseconds: 500), () {
+        bool isUpdated = false;
+        final error = validateContractorEmail(contractorEmailController.text);
+        if (error != contractorEmailErrorText) {
+          isUpdated = true;
+        }
+        contractorEmailErrorText = error;
+        if (isUpdated) rebuildUi();
+      });
+    });
   }
 
   void getUserCurrentCompleteAddress() async {
@@ -493,7 +527,8 @@ class ApplicationViewModel extends BaseViewModel {
       }
 
       final applicant = ApplicantModel(
-        name: applicantNameController.text,
+        firstName: applicantFirstNameController.text,
+        lastName: applicantLastNameController.text,
         country: applicantCountryController.text,
         state: applicantStateController.text,
         city: applicantCityController.text,

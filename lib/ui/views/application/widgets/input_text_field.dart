@@ -7,6 +7,7 @@ class InputTextField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.validator,
+    this.errorText,
     this.label,
     this.hint,
     this.maxLines = 1,
@@ -20,6 +21,7 @@ class InputTextField extends StatelessWidget {
   final String? label;
   final String? hint;
   final String? Function(String?)? validator;
+  final String? errorText;
   final int? maxLines;
   final bool showSuffixArrow;
   final TextEditingController controller;
@@ -48,6 +50,7 @@ class InputTextField extends StatelessWidget {
             minLines: maxLines,
             validator: validator,
             enabled: enabled,
+            forceErrorText: errorText,
             keyboardType: keyboardType,
             inputFormatters: [
               if (digitsOnly!) FilteringTextInputFormatter.digitsOnly,
@@ -69,7 +72,10 @@ class InputTextField extends StatelessWidget {
               ),
               fillColor: Colors.white,
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                borderSide: BorderSide(
+                  color: Theme.of(context).primaryColor,
+                  width: 1.5,
+                ),
                 borderRadius: BorderRadius.circular(6),
               ),
               errorBorder: OutlineInputBorder(
@@ -77,7 +83,10 @@ class InputTextField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
               ),
               focusedErrorBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Theme.of(context).primaryColor),
+                borderSide: const BorderSide(
+                  color: Colors.red,
+                  width: 1.5,
+                ),
                 borderRadius: BorderRadius.circular(6),
               ),
               suffixIcon:

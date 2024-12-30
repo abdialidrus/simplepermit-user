@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 
 class ApplicantModel extends Equatable {
-  final String name;
+  final String firstName;
+  final String lastName;
   final String country;
   final String state;
   final String city;
@@ -13,7 +14,8 @@ class ApplicantModel extends Equatable {
   final String role;
 
   const ApplicantModel({
-    required this.name,
+    required this.firstName,
+    required this.lastName,
     required this.country,
     required this.state,
     required this.city,
@@ -26,7 +28,8 @@ class ApplicantModel extends Equatable {
   });
 
   Map<String, dynamic> toJson() => {
-        'name': name,
+        'firstName': firstName,
+        'lastName': lastName,
         'country': country,
         'state': state,
         'city': city,
@@ -40,7 +43,8 @@ class ApplicantModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        name,
+        firstName,
+        lastName,
         country,
         state,
         city,

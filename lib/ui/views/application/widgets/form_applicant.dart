@@ -21,9 +21,16 @@ class ApplicantForm extends ViewModelWidget<ApplicationViewModel> {
             const FormSubtitle(label: 'PERMIT APPLICANT INFORMATION'),
             verticalSpaceSmall,
             InputTextField(
-              label: 'Name',
-              hint: 'Ex. Jane Doe',
-              controller: viewModel.applicantNameController,
+              label: 'First Name',
+              hint: 'Ex. Jane',
+              controller: viewModel.applicantFirstNameController,
+              validator: viewModel.validateApplicantName,
+            ),
+            verticalSpaceSmall,
+            InputTextField(
+              label: 'Last Name',
+              hint: 'Ex. Doe',
+              controller: viewModel.applicantLastNameController,
               validator: viewModel.validateApplicantName,
             ),
 
@@ -51,6 +58,7 @@ class ApplicantForm extends ViewModelWidget<ApplicationViewModel> {
               controller: viewModel.applicantEmailController,
               validator: viewModel.validateApplicantEmail,
               keyboardType: TextInputType.emailAddress,
+              errorText: viewModel.applicantEmailErrorText,
             ),
             verticalSpaceSmall,
             InputTextField(
