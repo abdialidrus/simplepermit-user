@@ -786,11 +786,10 @@ class MockApplicationService extends _i1.Mock
       ) as _i8.Future<void>);
 
   @override
-  _i8.Future<List<int>> uploadDocuments(List<_i14.File>? files) =>
-      (super.noSuchMethod(
+  _i8.Future<List<int>> uploadDocuments(_i14.File? file) => (super.noSuchMethod(
         Invocation.method(
           #uploadDocuments,
-          [files],
+          [file],
         ),
         returnValue: _i8.Future<List<int>>.value(<int>[]),
         returnValueForMissingStub: _i8.Future<List<int>>.value(<int>[]),
